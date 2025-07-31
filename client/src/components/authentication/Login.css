@@ -1,0 +1,13 @@
+.submit-btn{
+    color: #fff;
+    background-color: #000;
+}
+
+.submit-btn:hover{
+    color: #000;
+}
+
+.sign-up-input:focus{
+    border-color: #000 !important;
+    box-shadow: 0 0 0 1px #000 !important;
+}

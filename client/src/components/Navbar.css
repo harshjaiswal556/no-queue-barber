@@ -1,0 +1,17 @@
+.nav-link{
+    color: #000;
+}
+
+.nav-link:hover{
+    color: #4b4b4b;
+    text-decoration: none;
+}
+
+.sign-up-btn{
+    background-color: #000;
+    color: #fff;
+}
+
+.sign-up-btn:hover{
+    color: #000;
+}
