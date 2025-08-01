@@ -37,6 +37,19 @@ const loginUser = async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if(user && user.password === password) {
+            const token = generateToken(user._id);
+            res.cookie("token", token, {
+                httpOnly: false,
+                secure: true, 
+                sameSite: "strict",
+                maxAge: 24 * 60 * 60 * 1000 
+            });
+            res.cookie("role", user.role, {
+                httpOnly: false,
+                secure: true, 
+                sameSite: "strict",
+                maxAge: 24 * 60 * 60 * 1000 
+            });
             res.status(200).json({ message: 'Login successful', user, token: generateToken(user._id) });
         } else {
             res.status(401).json({ message: 'Invalid email or password' });

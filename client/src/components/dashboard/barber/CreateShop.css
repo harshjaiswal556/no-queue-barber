@@ -1,0 +1,27 @@
+.shop-input:focus{
+    border-color: #000 !important;
+    box-shadow: 0 0 0 1px #000 !important;
+}
+
+.input-time{
+    display: flex;
+    align-items: center;
+    border-radius: 0.375rem;        
+    box-shadow: 0 0 0 1px #cbd5e0;  
+    padding: 0.4rem 1rem;              
+}
+
+.input-time p{
+    color: #999999;
+}
+
+.custom-timepicker {
+  width: 100%;
+}
+
+.custom-timepicker .react-time-picker__wrapper {
+  border: none !important;        
+  background-color: white;        
+  width: 100%;
+}
+

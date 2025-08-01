@@ -3,15 +3,16 @@
 }
 
 .nav-link:hover{
-    color: #4b4b4b;
-    text-decoration: none;
+    color: #757575 !important;
+    text-decoration: none !important;
 }
 
 .sign-up-btn{
-    background-color: #000;
-    color: #fff;
+    background-color: #000 !important;
+    color: #fff !important;
 }
 
 .sign-up-btn:hover{
-    color: #000;
+    color: #000 !important;
+    background-color: #ebebeb !important;
 }

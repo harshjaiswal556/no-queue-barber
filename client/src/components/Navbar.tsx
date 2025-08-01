@@ -12,9 +12,24 @@ import {
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import "./Navbar.css";
 import Login from "./authentication/Login";
+import Signup from "./authentication/Signup";
 
 const Navbar = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isMenuOpen,
+    onOpen: onMenuOpen,
+    onClose: onMenuClose,
+  } = useDisclosure();
+  const {
+    isOpen: isLoginOpen,
+    onOpen: onLoginOpen,
+    onClose: onLoginClose,
+  } = useDisclosure();
+  const {
+    isOpen: isSignupOpen,
+    onOpen: onSignupOpen,
+    onClose: onSignupClose,
+  } = useDisclosure();
 
   return (
     <>
@@ -25,16 +40,14 @@ const Navbar = () => {
           justifyContent="space-between"
           className="px-4 max-w-7xl mx-auto"
         >
-          {/* Logo */}
           <Box className="text-xl font-bold text-black-600">NoQueueBarber</Box>
 
-          {/* Desktop Menu */}
           <Flex display={{ base: "none", md: "flex" }} gap={6}>
-            <Link href="#" className="nav-link">
-              About
-            </Link>
-            <Link href="#" className="nav-link">
+            <Link href="/" className="nav-link">
               Home
+            </Link>
+            <Link href="/dashboard" className="nav-link">
+              Dashboard
             </Link>
             <Link href="#" className="nav-link">
               Services
@@ -44,26 +57,26 @@ const Navbar = () => {
             </Link>
           </Flex>
 
-          {/* Right Buttons */}
           <Flex display={{ base: "none", md: "flex" }} gap={4}>
-            <Button variant="outline">Login</Button>
-            <Button className="sign-up-btn" onClick={onOpen}>
+            <Button variant="outline" onClick={onLoginOpen}>
+              Login
+            </Button>
+            <Button className="sign-up-btn" onClick={onSignupOpen}>
               Sign Up
             </Button>
           </Flex>
 
-          {/* Mobile Menu Button */}
           <IconButton
             size="md"
-            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+            icon={isMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
             aria-label="Open Menu"
             display={{ md: "none" }}
-            onClick={isOpen ? onClose : onOpen}
+            onClick={isMenuOpen ? onMenuClose : onMenuOpen}
           />
         </Flex>
 
         {/* Mobile Menu */}
-        {isOpen && (
+        {isMenuOpen && (
           <Box pb={4} display={{ md: "none" }}>
             <Stack as="nav" spacing={4} className="px-4">
               <Link href="#" className="nav-link">
@@ -78,16 +91,25 @@ const Navbar = () => {
               <Link href="#" className="nav-link">
                 Contact
               </Link>
-              <Button variant="outline">Login</Button>
-              <Button className="sign-up-btn">Sign Up</Button>
+              <Button variant="outline" onClick={onLoginOpen}>
+                Login
+              </Button>
+              <Button className="sign-up-btn" onClick={onSignupOpen}>
+                Sign Up
+              </Button>
             </Stack>
           </Box>
         )}
       </Box>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isLoginOpen} onClose={onLoginClose}>
         <ModalOverlay />
-        <Login onClose={onClose} />
+        <Login onClose={onLoginClose} />
+      </Modal>
+
+      <Modal size={"4xl"} isOpen={isSignupOpen} onClose={onSignupClose}>
+        <ModalOverlay />
+        <Signup onClose={onSignupClose} />
       </Modal>
     </>
   );
