@@ -26,51 +26,86 @@ import "react-time-picker/dist/TimePicker.css";
 import "react-clock/dist/Clock.css";
 import "./CreateShop.css";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import type { RootState } from "../../../store/auth/authStore";
 
 const CreateShop = ({ onClose }: any) => {
   const [shopName, setShopName] = useState("");
-  const [shopAddress, setShopAddress] = useState("");
-  const [shopZipcode, setShopZipcode] = useState("");
+  const [shopAddress, setShopAddress] = useState<string>("");
+  const [shopZipcode, setShopZipcode] = useState<string>("");
   const [shopStart, setShopStart] = useState<string | null>(null);
   const [shopEnd, setShopEnd] = useState<string | null>(null);
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selectedServices, setSelectedServices] = useState<
+    Record<string, { price: number; time: number }>
+  >({});
 
   const toast = useToast();
+  const user = useSelector((state: RootState) => state.auth.user);
 
-  const options = ["React", "Vue", "Angular", "Svelte"];
+  const token = Cookies.get("token");
+
+  const options = ["Hair cut", "Beard trim", "Massage", "D-Tan", "Hair color"];
 
   const toggleOption = (option: string) => {
-    setSelected((prev) =>
-      prev.includes(option)
-        ? prev.filter((item) => item !== option)
-        : [...prev, option]
-    );
+    setSelectedServices((prev) => {
+      if (prev[option]) {
+        const newState = { ...prev };
+        delete newState[option]; // remove service
+        return newState;
+      }
+      return { ...prev, [option]: { price: 0, time: 0 } }; // default values
+    });
+  };
+
+  const updateServiceDetail = (
+    serviceName: string,
+    field: "price" | "time",
+    value: number
+  ) => {
+    setSelectedServices((prev) => ({
+      ...prev,
+      [serviceName]: {
+        ...prev[serviceName],
+        [field]: value,
+      },
+    }));
   };
 
   const removeOption = (option: string) => {
-    setSelected((prev) => prev.filter((item) => item !== option));
+    setSelectedServices((prev) => {
+      const newState = { ...prev };
+      delete newState[option];
+      return newState;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(user);
 
     const shopData = {
+      barber_id: user?._id,
       shopName,
-      shopAddress,
-      shopZipcode,
-      selected,
-      shopStart,
-      shopEnd
+      address: shopAddress,
+      zipcode: shopZipcode,
+      services: selectedServices,
+      start: shopStart,
+      end: shopEnd,
     };
 
     try {
       const res = await fetch(`http://localhost:3000/api/shops/create`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         credentials: "include",
         body: JSON.stringify(shopData),
       });
       const data = await res.json();
+
       if (res.ok) {
         toast({
           title: data.message,
@@ -129,43 +164,92 @@ const CreateShop = ({ onClose }: any) => {
                     gap={2}
                     cursor="pointer"
                   >
-                    {selected.length === 0 && (
+                    {Object.keys(selectedServices).length === 0 && (
                       <Box color="gray.400">Select Services...</Box>
                     )}
+
                     <Wrap>
-                      {selected.map((item) => (
+                      {Object.keys(selectedServices).map((service) => (
                         <Tag
                           size="md"
-                          key={item}
+                          key={service}
                           borderRadius="full"
                           variant="solid"
                           colorScheme="blue"
                         >
-                          <TagLabel>{item}</TagLabel>
+                          <TagLabel>
+                            {service} - ₹{selectedServices[service].price} /{" "}
+                            {selectedServices[service].time} min
+                          </TagLabel>
                           <TagCloseButton
                             onClick={(e) => {
-                              e.stopPropagation(); 
-                              removeOption(item);
+                              e.stopPropagation();
+                              removeOption(service);
                             }}
                           />
                         </Tag>
                       ))}
                     </Wrap>
+
                     <ChevronDownIcon ml="auto" />
                   </Flex>
                 </MenuButton>
 
                 <MenuList>
-                  {options.map((option) => (
-                    <MenuItem
-                      key={option}
-                      onClick={() => toggleOption(option)}
-                      bg={selected.includes(option) ? "blue.50" : "white"}
-                      _hover={{ bg: "gray.100" }}
-                    >
-                      {option}
-                    </MenuItem>
-                  ))}
+                  {options.map((option) => {
+                    const isSelected = !!selectedServices[option];
+                    const serviceData = selectedServices[option];
+
+                    return (
+                      <MenuItem
+                        key={option}
+                        onClick={() => toggleOption(option)}
+                        bg={isSelected ? "blue.50" : "white"}
+                        _hover={{ bg: "gray.100" }}
+                      >
+                        <Flex
+                          align="center"
+                          justify="space-between"
+                          w="full"
+                          gap={2}
+                        >
+                          <Text>{option}</Text>
+                          {isSelected && (
+                            <Flex gap={2} onClick={(e) => e.stopPropagation()}>
+                              <Input
+                                type="number"
+                                placeholder="Price"
+                                value={serviceData.price || ""}
+                                onChange={(e) =>
+                                  updateServiceDetail(
+                                    option,
+                                    "price",
+                                    Number(e.target.value)
+                                  )
+                                }
+                                w="70px"
+                                size="sm"
+                              />
+                              <Input
+                                type="number"
+                                placeholder="Time"
+                                value={serviceData.time || ""}
+                                onChange={(e) =>
+                                  updateServiceDetail(
+                                    option,
+                                    "time",
+                                    Number(e.target.value)
+                                  )
+                                }
+                                w="60px"
+                                size="sm"
+                              />
+                            </Flex>
+                          )}
+                        </Flex>
+                      </MenuItem>
+                    );
+                  })}
                 </MenuList>
               </Menu>
             </Flex>
@@ -175,7 +259,7 @@ const CreateShop = ({ onClose }: any) => {
                 className="shop-input"
                 placeholder="Enter Zipcode"
                 value={shopZipcode}
-                onChange={(e)=>setShopZipcode(e.target.value)}
+                onChange={(e) => setShopZipcode(e.target.value)}
               />
               <Box className="input-time shop-input bg-white rounded w-full">
                 <Text w={120}>Open Time</Text>

@@ -4,7 +4,9 @@ export const isLoggedIn = ()=>{
     
     const token = Cookies.get("token");
     const role = Cookies.get("role");
-    if(!token || !role) return null
-    return {token, role}
+    const id = Cookies.get("_id");
+
+    if(!token || !role || !id) return null;
+    return {token, role, id}
 
 }

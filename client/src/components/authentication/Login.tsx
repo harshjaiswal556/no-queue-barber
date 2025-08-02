@@ -11,6 +11,8 @@ import {
 } from "@chakra-ui/react";
 import "./Login.css";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../store/auth/authSlice";
 
 const Login = ({ onClose }: any) => {
 
@@ -18,6 +20,7 @@ const Login = ({ onClose }: any) => {
   const [password, setPassword] = useState("");
 
   const toast = useToast();
+  const dispatch = useDispatch();
 
   const handleSubmit = async(e: React.FormEvent) =>{
     e.preventDefault();
@@ -41,6 +44,8 @@ const Login = ({ onClose }: any) => {
           status: "success",
           duration: 5000,
         });
+        
+        dispatch(setUser(data.user))
       } else {
         toast({
           title: data.message,
