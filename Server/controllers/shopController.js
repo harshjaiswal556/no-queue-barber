@@ -99,6 +99,12 @@ const createShopAvailability = async (req, res) => {
       return res.status(404).json({ message: "No shop found" });
     }
 
+    const isShopAvailabilityAdded = await Availability.findOne({ shop_id });
+
+    if (isShopAvailabilityAdded) {
+      return res.status(409).json({ message: "Shop data already present" })
+    }
+
     if (isShopExist.barber_id.toString() !== isBarberExists._id.toString()) {
       return res.status(403).json({ message: "Only shop owner can upload their shop availabilty details" });
     }

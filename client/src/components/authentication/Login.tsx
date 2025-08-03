@@ -9,7 +9,6 @@ import {
   ModalHeader,
   useToast,
 } from "@chakra-ui/react";
-import "./Login.css";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/auth/authSlice";
@@ -71,7 +70,7 @@ const Login = ({ onClose }: any) => {
             <Input
               mb={2}
               type="email"
-              className="login-input"
+              className="custom-input"
               placeholder="Enter Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -79,7 +78,7 @@ const Login = ({ onClose }: any) => {
             <Input
               mt={2}
               type="password"
-              className="login-input"
+              className="custom-input"
               placeholder="Enter Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

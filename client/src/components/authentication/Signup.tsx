@@ -12,7 +12,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-import "./Signup.css";
 import { useState } from "react";
 
 const Signup = ({ onClose }: any) => {
@@ -67,74 +66,74 @@ const Signup = ({ onClose }: any) => {
   return (
     <ModalContent>
       <form onSubmit={handleSubmit}>
-      <ModalHeader>Create your account</ModalHeader>
-      <ModalCloseButton />
-      <ModalBody pb={6}>
-        <FormControl>
-          <Flex mb={2}>
-            <Input
-              type="name"
-              className="sign-up-input"
-              placeholder="Enter Full Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </Flex>
-          <Flex mb={2}>
-            <Input
-              type="email"
-              className="sign-up-input"
-              placeholder="Enter Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Flex>
-          <Flex gap={4} mb={2}>
-            <Input
-              type="text"
-              className="sign-up-input"
-              placeholder="Enter Contact Number"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-            <Select
-              className="sign-up-input"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <option value="Enter Role" disabled selected>
-                Enter Role
-              </option>
-              <option value="customer">Customer</option>
-              <option value="barber">Barber</option>
-            </Select>
-          </Flex>
-          <Flex gap={4}>
-            <Input
-              type="password"
-              className="sign-up-input"
-              placeholder="Enter Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Input
-              type="password"
-              className="sign-up-input"
-              placeholder="Enter Same Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-          </Flex>
-        </FormControl>
-      </ModalBody>
-      <ModalFooter>
-        <Button type="submit" className="submit-btn" mr={3}>
-          Create your account
-        </Button>
-        <Button variant="outline" onClick={onClose} className="cancel-btn">
-          Cancel
-        </Button>
-      </ModalFooter>
+        <ModalHeader>Create your account</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody pb={6}>
+          <FormControl>
+            <Flex mb={2}>
+              <Input
+                type="name"
+                className="custom-input"
+                placeholder="Enter Full Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Flex>
+            <Flex mb={2}>
+              <Input
+                type="email"
+                className="custom-input"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Flex>
+            <Flex gap={4} mb={2}>
+              <Input
+                type="text"
+                className="custom-input"
+                placeholder="Enter Contact Number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+              <Select
+                className="custom-input"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <option value="Enter Role" disabled selected>
+                  Enter Role
+                </option>
+                <option value="customer">Customer</option>
+                <option value="barber">Barber</option>
+              </Select>
+            </Flex>
+            <Flex gap={4}>
+              <Input
+                type="password"
+                className="custom-input"
+                placeholder="Enter Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Input
+                type="password"
+                className="custom-input"
+                placeholder="Enter Same Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </Flex>
+          </FormControl>
+        </ModalBody>
+        <ModalFooter>
+          <Button type="submit" className="submit-btn" mr={3}>
+            Create your account
+          </Button>
+          <Button variant="outline" onClick={onClose} className="cancel-btn">
+            Cancel
+          </Button>
+        </ModalFooter>
       </form>
     </ModalContent>
   );

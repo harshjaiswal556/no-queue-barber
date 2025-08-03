@@ -6,14 +6,22 @@ import {
   CardFooter,
   Heading,
   Image,
+  Modal,
+  ModalOverlay,
   Stack,
   Tag,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import "./ShopListingCard.css";
+import CreateShopAvailability from "./CreateShopAvailability";
 
 const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
-  console.log(shop);
+  const {
+    isOpen: isMenuOpen,
+    onOpen: onMenuOpen,
+    onClose: onMenuClose,
+  } = useDisclosure();
 
   return (
     <>
@@ -63,12 +71,22 @@ const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
           </CardBody>
 
           <CardFooter>
-            <Button variant="solid" className="submit-btn">
+            <Button variant="solid" className="submit-btn" onClick={onMenuOpen}>
               Add Availability
             </Button>
           </CardFooter>
         </Stack>
       </Card>
+
+      <Modal isOpen={isMenuOpen} onClose={onMenuClose} size={"md"}>
+        <ModalOverlay />
+        <CreateShopAvailability
+          onClose={onMenuClose}
+          shopId={shop?._id}
+          start={shop?.workingHours.start}
+          end={shop?.workingHours.end}
+        />
+      </Modal>
     </>
   );
 };
