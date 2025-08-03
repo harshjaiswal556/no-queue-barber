@@ -1,9 +1,10 @@
+const { default: mongoose } = require("mongoose");
 const Availability = require("../schema/availability");
 const Shop = require("../schema/shop");
 const User = require("../schema/user");
 
 const createShop = async (req, res) => {
-  const { barber_id, shopName, address, zipcode, services, start, end } =
+  const { barber_id, shopName, address, zipcode, services, start, end, imageUrl } =
     req.body;
 
   try {
@@ -48,6 +49,7 @@ const createShop = async (req, res) => {
         start,
         end,
       },
+      imageUrl
     });
 
     const saveShop = await newShop.save();
@@ -56,6 +58,20 @@ const createShop = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+const getShopByBarberId = async (req, res) => {
+  const id = req.params;
+  try {
+    const shops = await Shop.find({ barber_id: new mongoose.Types.ObjectId(id) });
+    if (!shops) {
+      return res.status(404).json({ message: "No shop found" });
+    }
+    res.status(200).json({ message: "Shop found successfully", shops });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message })
+  }
+}
 
 const createShopAvailability = async (req, res) => {
   const { barber_id, shop_id, day, totalChairs } = req.body;
@@ -70,7 +86,7 @@ const createShopAvailability = async (req, res) => {
     if (!isBarberExists) {
       return res.status(404).json({ message: "No user found" });
     }
-    
+
     if (isBarberExists.role !== "barber") {
       return res
         .status(403)
@@ -82,9 +98,9 @@ const createShopAvailability = async (req, res) => {
     if (!isShopExist) {
       return res.status(404).json({ message: "No shop found" });
     }
-    
-    if(isShopExist.barber_id.toString() !== isBarberExists._id.toString()){
-        return res.status(403).json({message: "Only shop owner can upload their shop availabilty details"});
+
+    if (isShopExist.barber_id.toString() !== isBarberExists._id.toString()) {
+      return res.status(403).json({ message: "Only shop owner can upload their shop availabilty details" });
     }
 
     const formattedDay = {};
@@ -108,4 +124,4 @@ const createShopAvailability = async (req, res) => {
   }
 };
 
-module.exports = { createShop, createShopAvailability };
+module.exports = { createShop, createShopAvailability, getShopByBarberId };

@@ -22,13 +22,16 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import TimePicker from "react-time-picker";
+import { BeatLoader } from "react-spinners";
 import "react-time-picker/dist/TimePicker.css";
 import "react-clock/dist/Clock.css";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import "./CreateShop.css";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import type { RootState } from "../../../store/auth/authStore";
+import { storage } from "@/utils/firebase";
 
 const CreateShop = ({ onClose }: any) => {
   const [shopName, setShopName] = useState("");
@@ -39,6 +42,8 @@ const CreateShop = ({ onClose }: any) => {
   const [selectedServices, setSelectedServices] = useState<
     Record<string, { price: number; time: number }>
   >({});
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const toast = useToast();
   const user = useSelector((state: RootState) => state.auth.user);
@@ -82,19 +87,28 @@ const CreateShop = ({ onClose }: any) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(user);
-
-    const shopData = {
-      barber_id: user?._id,
-      shopName,
-      address: shopAddress,
-      zipcode: shopZipcode,
-      services: selectedServices,
-      start: shopStart,
-      end: shopEnd,
-    };
+    setIsLoading(true);
 
     try {
+      let imageFileUrl = "";
+
+      if (imageFile) {
+        const imageRef = ref(storage, `shops/${Date.now()}-${imageFile.name}`);
+        await uploadBytes(imageRef, imageFile);
+        imageFileUrl = await getDownloadURL(imageRef);
+      }
+
+      const shopData = {
+        barber_id: user?._id,
+        shopName,
+        address: shopAddress,
+        zipcode: shopZipcode,
+        services: selectedServices,
+        start: shopStart,
+        end: shopEnd,
+        imageUrl: imageFileUrl,
+      };
+
       const res = await fetch(`http://localhost:3000/api/shops/create`, {
         method: "POST",
         headers: {
@@ -122,6 +136,8 @@ const CreateShop = ({ onClose }: any) => {
     } catch (error) {
       alert("Error! Please retry later");
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -252,6 +268,18 @@ const CreateShop = ({ onClose }: any) => {
                   })}
                 </MenuList>
               </Menu>
+              <Box>
+                <Input
+                  type="file"
+                  className="shop-input"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setImageFile(e.target.files[0]);
+                    }
+                  }}
+                />
+              </Box>
             </Flex>
             <Flex gap={4}>
               <Input
@@ -286,7 +314,14 @@ const CreateShop = ({ onClose }: any) => {
         </ModalBody>
 
         <ModalFooter>
-          <Button type="submit" className="submit-btn" mr={3}>
+          <Button
+            type="submit"
+            className="submit-btn"
+            mr={3}
+            colorScheme="blue"
+            isLoading={isLoading}
+            spinner={<BeatLoader size={8} color="white" />}
+          >
             Save
           </Button>
           <Button variant="outline" onClick={onClose} className="cancel-btn">

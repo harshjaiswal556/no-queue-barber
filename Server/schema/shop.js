@@ -20,8 +20,8 @@ const shopModel = mongoose.Schema({
     services: {
         type: Map,
         of: new mongoose.Schema({
-            price: {type: Number, required: true},
-            time: {type: Number, required: true}
+            price: { type: Number, required: true },
+            time: { type: Number, required: true }
         }),
         default: {}
     },
@@ -34,6 +34,10 @@ const shopModel = mongoose.Schema({
             type: String,
             required: true
         }
+    },
+    imageUrl: {
+        type: String,
+        required: false
     }
 }, {
     timestamps: true

@@ -1,10 +1,10 @@
 const express = require('express');
-const connectDB = require('./db/conn'); 
+const connectDB = require('./db/conn');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const cookieParser = require('cookie-parser')
 
-const userRoutes = require('./routes/userRoutes'); 
+const userRoutes = require('./routes/userRoutes');
 const shopRoutes = require('./routes/shopRoutes');
 
 dotenv.config();
@@ -13,7 +13,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     credentials: true
 }));
 app.use(cookieParser());
@@ -28,6 +28,6 @@ app.get('/', (req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/shops', shopRoutes);
 
-app.listen(port, ()=>{
+app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })

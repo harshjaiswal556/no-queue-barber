@@ -18,14 +18,16 @@ const registerUser = async (req, res) => {
         const newUser = new User({ name, email, password, phone, role });
 
         await newUser.save();
-        res.status(201).json({ message: 'User registered successfully', user: {
-            id: newUser._id,
-            name: newUser.name,
-            email: newUser.email,
-            phone: newUser.phone,
-            role: newUser.role,
-            token: generateToken(newUser._id)
-        } });
+        res.status(201).json({
+            message: 'User registered successfully', user: {
+                id: newUser._id,
+                name: newUser.name,
+                email: newUser.email,
+                phone: newUser.phone,
+                role: newUser.role,
+                token: generateToken(newUser._id)
+            }
+        });
     } catch (error) {
         return res.status(500).json({ message: 'Server error', error });
     }
@@ -36,25 +38,25 @@ const loginUser = async (req, res) => {
 
     try {
         const user = await User.findOne({ email });
-        if(user && user.password === password) {
+        if (user && user.password === password) {
             const token = generateToken(user._id);
             res.cookie("token", token, {
                 httpOnly: false,
-                secure: true, 
+                secure: true,
                 sameSite: "strict",
-                maxAge: 24 * 60 * 60 * 1000 
+                maxAge: 24 * 60 * 60 * 1000
             });
             res.cookie("role", user.role, {
                 httpOnly: false,
-                secure: true, 
+                secure: true,
                 sameSite: "strict",
-                maxAge: 24 * 60 * 60 * 1000 
+                maxAge: 24 * 60 * 60 * 1000
             });
             res.cookie("_id", user.id, {
                 httpOnly: false,
-                secure: true, 
+                secure: true,
                 sameSite: "strict",
-                maxAge: 24 * 60 * 60 * 1000 
+                maxAge: 24 * 60 * 60 * 1000
             });
             res.status(200).json({ message: 'Login successful', user, token: generateToken(user._id) });
         } else {
@@ -65,8 +67,16 @@ const loginUser = async (req, res) => {
     }
 };
 
+const logoutUser = async (req, res) => {
+    res.clearCookie("token");
+    res.clearCookie("role");
+    res.clearCookie("_id");
+    res.status(200).json({ message: "User logged out" })
+}
+
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    logoutUser
 };

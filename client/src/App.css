@@ -1,13 +1,15 @@
-.submit-btn{
-    background-color: #000 !important;
-    color: #fff !important;
+@import url('./styles/Colors.css');
+
+.submit-btn {
+  background-color: var(--primary-foreground-color) !important;
+  color: #fff !important;
 }
 
-.submit-btn:hover{
-    color: #000 !important;
-    background-color: #ebebeb !important;
+.submit-btn:hover {
+  color: var(--primary-foreground-color) !important;
+  background-color: #ebebeb !important;
 }
 
-.cancel-btn:hover{
+.cancel-btn:hover {
   background-color: #ebebeb !important;
 }
