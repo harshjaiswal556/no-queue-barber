@@ -15,6 +15,8 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
+import "./Barber.css";
+
 const Barber = () => {
   const {
     isOpen: isShopOpen,
@@ -53,8 +55,16 @@ const Barber = () => {
 
   return (
     <div>
-      <Box className="bg-white p-6 mx-auto text-center" mt={32}>
-        <Heading as="h1" size="xl" mb={4} color="#000">
+      <Box
+        className="hero-dashboard p-6 pt-0 mx-auto text-center h-[110vh] flex flex-col items-center justify-center"
+        mt={-16}
+      >
+        <Heading
+          as="h1"
+          size="xl"
+          mb={4}
+          color="var(--primary-foreground-color)"
+        >
           Welcome to Our Service
         </Heading>
 
@@ -73,7 +83,7 @@ const Barber = () => {
           as="h2"
           size={"lg"}
           m={16}
-          color={"#000"}
+          color={"var(--primary-foreground-color)"}
           className="text-center"
         >
           My Listed Shops

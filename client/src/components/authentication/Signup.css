@@ -1,4 +1,6 @@
-.sign-up-input:focus{
-    border-color: #000 !important;
-    box-shadow: 0 0 0 1px #000 !important;
+@import url('../../styles/Colors.css');
+
+.sign-up-input:focus {
+    border-color: var(--primary-foreground-color) !important;
+    box-shadow: 0 0 0 1px var(--primary-foreground-color) !important;
 }

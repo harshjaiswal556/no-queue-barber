@@ -1,3 +1,6 @@
 :root {
     --primary-foreground-color: #000;
+    --secondary-foreground-color: #757575;
+    --primary-background-color: #fff;
+    --secondary-background-color: #ebebeb;
 }

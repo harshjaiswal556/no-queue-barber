@@ -7,6 +7,7 @@ import {
   Heading,
   Image,
   Stack,
+  Tag,
   Text,
 } from "@chakra-ui/react";
 import "./ShopListingCard.css";
@@ -22,12 +23,22 @@ const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
         variant="outline"
         className="my-8"
       >
-        <Image
-          objectFit="cover"
-          maxW={{ base: "100%", sm: "200px" }}
-          src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
-          alt="Caffe Latte"
-        />
+        {shop?.imageUrl && (
+          <Image
+            objectFit="cover"
+            maxW={{ base: "100%", sm: "200px" }}
+            src={shop?.imageUrl}
+            alt={shop?.shopName}
+          />
+        )}
+        {!shop?.imageUrl && (
+          <Image
+            objectFit="cover"
+            maxW={{ base: "100%", sm: "200px" }}
+            src="https://png.pngtree.com/png-clipart/20190705/original/pngtree-black-and-white-barber-shop-logo-png-image_4359640.jpg"
+            alt={shop?.shopName}
+          />
+        )}
 
         <Stack>
           <CardBody>
@@ -35,6 +46,19 @@ const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
 
             <Text py="2">
               {shop?.address} - <span className="zipcode">{shop?.zipcode}</span>
+            </Text>
+
+            {shop?.services &&
+              Object.keys(shop.services).map((key) => (
+                <Tag key={key} mr={2} py={1} px={2}>
+                  {key} - ₹{shop.services[key].price} /{" "}
+                  {shop.services[key].time} min
+                </Tag>
+              ))}
+
+            <Text mt={2}>
+              <strong>Timings:</strong> {shop?.workingHours.start} -{" "}
+              {shop?.workingHours.end}
             </Text>
           </CardBody>
 

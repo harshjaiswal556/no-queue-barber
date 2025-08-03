@@ -1,3 +1,7 @@
 .zipcode {
-    color: #757575;
+    color: var(--secondary-foreground-color);
+}
+
+.chakra-card__footer {
+    padding-top: 0 !important;
 }

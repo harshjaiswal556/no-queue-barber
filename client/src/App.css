@@ -2,14 +2,14 @@
 
 .submit-btn {
   background-color: var(--primary-foreground-color) !important;
-  color: #fff !important;
+  color: var(--primary-background-color) !important;
 }
 
 .submit-btn:hover {
   color: var(--primary-foreground-color) !important;
-  background-color: #ebebeb !important;
+  background-color: var(--secondary-background-color) !important;
 }
 
 .cancel-btn:hover {
-  background-color: #ebebeb !important;
+  background-color: var(--secondary-background-color) !important;
 }
