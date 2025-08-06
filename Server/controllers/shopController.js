@@ -130,4 +130,38 @@ const createShopAvailability = async (req, res) => {
   }
 };
 
-module.exports = { createShop, createShopAvailability, getShopByBarberId };
+const getAllShops = async (req, res) => {
+  try {
+    const { zipcode, shopName, services } = req.query;
+
+    const filter = {};
+
+    if (zipcode) {
+      filter.zipcode = zipcode;
+    }
+
+    if (shopName) {
+      filter.shopName = { $regex: shopName, $options: "i" };
+    }
+
+    if (services) {
+      const servicesArray = Array.isArray(services)
+        ? services
+        : services.split(',').map(s => s.trim());
+
+      servicesArray.forEach(service => {
+        filter[`services.${service}`] = { $exists: true };
+      });
+    }
+
+    const shops = await Shop.find(filter);
+    if (!shops) {
+      return res.status(404).json({ message: "No shop found" });
+    }
+    res.status(200).json({ message: "Shop found successfully", shops });
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
+module.exports = { createShop, createShopAvailability, getShopByBarberId, getAllShops };

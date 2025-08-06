@@ -1,0 +1,28 @@
+@import url('../styles/Colors.css');
+
+.shop-list-card {
+    transition: box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.shop-list-card:hover {
+    box-shadow: 0 0 7px var(--primary-shadow-color);
+    cursor: pointer;
+}
+
+.image-wrapper {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 0.5rem;
+}
+
+.shop-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.shop-list-card:hover .shop-image {
+    transform: scale(1.1);
+}

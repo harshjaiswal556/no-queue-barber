@@ -1,0 +1,1 @@
+export const services = ["Hair cut", "Beard trim", "Massage", "D-Tan", "Hair color"];

@@ -35,10 +35,6 @@ const CreateShopAvailability = ({ onClose, shopId, start, end }: any) => {
     "Saturday",
   ];
 
-  //   const isAvailabilityPresent = () =>{
-
-  //   }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {

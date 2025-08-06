@@ -32,6 +32,7 @@ import { useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import type { RootState } from "../../../store/auth/authStore";
 import { storage } from "@/utils/firebase";
+import { services } from "@/models/services.data";
 
 const CreateShop = ({ onClose }: any) => {
   const [shopName, setShopName] = useState("");
@@ -50,7 +51,7 @@ const CreateShop = ({ onClose }: any) => {
 
   const token = Cookies.get("token");
 
-  const options = ["Hair cut", "Beard trim", "Massage", "D-Tan", "Hair color"];
+  const options = services;
 
   const toggleOption = (option: string) => {
     setSelectedServices((prev) => {
