@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login = ({ onClose }: any) => {
   const [email, setEmail] = useState("");
@@ -19,6 +20,7 @@ const Login = ({ onClose }: any) => {
 
   const toast = useToast();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +42,7 @@ const Login = ({ onClose }: any) => {
       );
       const data = await res.json();
       if (res.ok) {
+        navigate("/dashboard");
         toast({
           title: data.message,
           status: "success",
@@ -87,7 +90,7 @@ const Login = ({ onClose }: any) => {
         </ModalBody>
 
         <ModalFooter>
-          <Button type="submit" className="submit-btn" mr={3}>
+          <Button type="submit" className="submit-btn" onClick={onClose} mr={3}>
             Login
           </Button>
           <Button variant="outline" onClick={onClose} className="cancel-btn">

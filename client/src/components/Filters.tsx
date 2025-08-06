@@ -20,7 +20,7 @@ import {
 import Search from "./Search";
 import { useState } from "react";
 
-const Filters = () => {
+const Filters = ({ sendShopDataToParent }: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [zipcode, setZipcode] = useState<string>("");
   const [serviceFilter, setServiceFilter] = useState<string[]>([]);
@@ -38,6 +38,10 @@ const Filters = () => {
     }
   };
   const options = services;
+
+  const handleSearchData = (data: any) => {
+    sendShopDataToParent(data);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,8 +66,8 @@ const Filters = () => {
         `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/list${queryString}`
       );
       const data = await res.json();
-
       if (res.ok) {
+        sendShopDataToParent(data.shops);
         toast({
           title: data.message,
           status: "success",
@@ -76,7 +80,6 @@ const Filters = () => {
           duration: 5000,
         });
       }
-      console.log(data);
     } catch (error: any) {
       console.error(error);
     }
@@ -85,7 +88,7 @@ const Filters = () => {
   return (
     <>
       <Box className="flex flex-row" gap={4} mx={5}>
-        <Search />
+        <Search sendSearchDataToParent={handleSearchData} />
         <Button leftIcon={<AddIcon />} className="submit-btn" onClick={onOpen}>
           More Filters
         </Button>

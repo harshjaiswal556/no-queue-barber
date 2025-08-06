@@ -8,6 +8,10 @@ const Stores = () => {
   const [shop, setShop] = useState<Shop[]>([]);
   const toast = useToast();
 
+  const handleShopDataFromChild = (data: any) => {
+    setShop(data);
+  };
+
   const fetchAllShops = async () => {
     try {
       const res = await fetch(
@@ -41,7 +45,7 @@ const Stores = () => {
           lg: 16,
         }}
       >
-        <Filters />
+        <Filters sendShopDataToParent={handleShopDataFromChild} />
       </Box>
       <Box
         className="flex justify-start flex-wrap"
