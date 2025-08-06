@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser')
 
 const userRoutes = require('./routes/userRoutes');
 const shopRoutes = require('./routes/shopRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/shops', shopRoutes);
+app.use('/api/bookings', bookingRoutes)
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
