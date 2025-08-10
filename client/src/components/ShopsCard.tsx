@@ -7,15 +7,21 @@ import {
   CardFooter,
   Heading,
   Image,
+  Modal,
+  ModalOverlay,
   Stack,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import "./ShopsCard.css";
 import Cookies from "js-cookie";
+import CreateShopBooking from "./dashboard/customer/CreateShopBooking";
 
 const ShopsCard = ({ shop }: { shop: Shop | null }) => {
   const role = Cookies.get("role");
+
+  const {isOpen: isShopOpen, onOpen: onShopOpen, onClose: onShopClose} = useDisclosure();
 
   return (
     <div>
@@ -40,13 +46,17 @@ const ShopsCard = ({ shop }: { shop: Shop | null }) => {
         {role !== "barber" && (
           <CardFooter>
             <ButtonGroup spacing="2" className="w-[100%]">
-              <Button variant="solid" className="submit-btn w-[100%]">
+              <Button variant="solid" className="submit-btn w-[100%]" onClick={onShopOpen}>
                 Book My Slot Now
               </Button>
             </ButtonGroup>
           </CardFooter>
         )}
       </Card>
+      <Modal isOpen={isShopOpen} onClose={onShopClose}>
+        <ModalOverlay />
+        <CreateShopBooking onClose={onShopClose} shop={shop}/>
+        </Modal>
     </div>
   );
 };

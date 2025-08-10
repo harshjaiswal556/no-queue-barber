@@ -1,4 +1,4 @@
-interface Service {
+export interface Service {
   price: number;
   time: string;
 }

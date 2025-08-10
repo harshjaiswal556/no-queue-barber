@@ -96,10 +96,9 @@ const Barber = () => {
             lg: 16,
           }}
         >
-          {shop &&
-            shop.map((shop, index) => (
-              <ShopListingCard key={index} shop={shop} />
-            ))}
+          {shop?.map((shop) => (
+            <ShopListingCard key={shop._id} shop={shop} />
+          ))}
         </Box>
       </Box>
 

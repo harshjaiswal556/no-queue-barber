@@ -109,6 +109,7 @@ const CreateShopAvailability = ({ onClose, shopId, start, end }: any) => {
                     className="w-full custom-timepicker"
                     disableClock
                     clearIcon={null}
+                    format="HH:mm"
                     value={open[index] || ""}
                     onChange={(value: string | null) => {
                       const newOpen = [...open];
@@ -124,6 +125,7 @@ const CreateShopAvailability = ({ onClose, shopId, start, end }: any) => {
                     className="w-full custom-timepicker"
                     disableClock
                     clearIcon={null}
+                    format="HH:mm"
                     value={close[index] || ""}
                     onChange={(value: string | null) => {
                       const newClose = [...close];
@@ -142,7 +144,7 @@ const CreateShopAvailability = ({ onClose, shopId, start, end }: any) => {
               <Input
                 type="number"
                 className="shop-input"
-                placeholder="Enter Shop Address"
+                placeholder="Enter Total Seats"
                 value={seats}
                 onChange={(e) => setSeats(Number(e.target.value))}
               />

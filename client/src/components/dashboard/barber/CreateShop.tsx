@@ -57,10 +57,10 @@ const CreateShop = ({ onClose }: any) => {
     setSelectedServices((prev) => {
       if (prev[option]) {
         const newState = { ...prev };
-        delete newState[option]; // remove service
+        delete newState[option]; 
         return newState;
       }
-      return { ...prev, [option]: { price: 0, time: 0 } }; // default values
+      return { ...prev, [option]: { price: 0, time: 0 } }; 
     });
   };
 
