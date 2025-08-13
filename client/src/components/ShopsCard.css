@@ -26,3 +26,8 @@
 .shop-list-card:hover .shop-image {
     transform: scale(1.1);
 }
+
+.isview-shop-list-card {
+    margin: 0 !important;
+    box-shadow: none !important;
+}

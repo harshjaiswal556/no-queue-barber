@@ -45,14 +45,20 @@ const createBooking = async (req, res) => {
 
 const getBookingByCustomerId = async (req, res) => {
   const { customer_id } = req.params;
+  const { shopName } = req.query;
+
+  const filter = { customer_id };
+
+  if (shopName) {
+    filter.shopName = { $regex: shopName, $options: "i" };
+  }
 
   try {
-    const bookings = await Booking.find({ customer_id });
-
+    const bookings = await Booking.find(filter);
     if (!bookings || bookings.length === 0) {
       return res.status(404).json({ message: "No bookings found" });
     }
-    
+
     res.status(200).json({ bookings: bookings });
   } catch (error) {
     res.status(500).json({ message: error });

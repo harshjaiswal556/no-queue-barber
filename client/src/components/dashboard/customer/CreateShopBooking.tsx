@@ -184,9 +184,9 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
       console.log(selectedSlot?.toString());
       const timeSlot = {
         start: selectedSlot,
-        end: dayjs(selectedSlot, "HH:mm") // parse only time
+        end: dayjs(selectedSlot, "HH:mm")
           .add(slotDuration, "minute")
-          .format("HH:mm"), // format back to time
+          .format("HH:mm"),
       };
       console.log(timeSlot);
 

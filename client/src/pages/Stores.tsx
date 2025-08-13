@@ -57,7 +57,9 @@ const Stores = () => {
         }}
       >
         {shop &&
-          shop.map((shop, index) => <ShopsCard shop={shop} key={index} />)}
+          shop.map((shop, index) => (
+            <ShopsCard shop={shop} isView={false} key={index} />
+          ))}
       </Box>
     </div>
   );
