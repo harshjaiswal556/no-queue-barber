@@ -27,6 +27,8 @@ const MyBookingCard = ({ bookingDetails }: any) => {
   } = useDisclosure();
   const [shop, setShop] = useState<Shop>();
 
+  console.log(bookingDetails);
+
   const getShopDetailsByShopId = async (shopId: string) => {
     try {
       const res = await fetch(
@@ -45,7 +47,7 @@ const MyBookingCard = ({ bookingDetails }: any) => {
   useEffect(() => {
     const shopId = bookingDetails?.shop_id;
     getShopDetailsByShopId(shopId);
-  }, []);
+  }, [bookingDetails]);
   return (
     <>
       <Card
@@ -114,23 +116,26 @@ const MyBookingCard = ({ bookingDetails }: any) => {
               bookingDetails.payment_status === "pending" ? (
                 <Button
                   variant="solid"
-                  className="submit-btn"
+                  className="submit-btn mx-2"
                   onClick={onMenuOpen}
                 >
                   Pay Now
                 </Button>
               ) : (
-                <Button variant="outline" className="cursor-default">
+                <Button variant="outline" className="cursor-default mx-2">
                   Paid
                 </Button>
               )
             ) : null}
             <Button
               variant="solid"
-              className="submit-btn mx-4"
+              className="submit-btn mx-2"
               onClick={onMenuOpen}
             >
               Shop Details
+            </Button>
+            <Button variant="solid" className="submit-btn mx-2">
+              Cancel Booking
             </Button>
           </CardFooter>
         </Stack>

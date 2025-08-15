@@ -8,6 +8,7 @@ import Search from "@/components/Search";
 
 const GetShopBooking = () => {
   const [myBookings, setMyBookings] = useState<Bookings[]>();
+  const [status, setStatus] = useState<string | null>();
 
   const token = Cookies.get("token");
 
@@ -52,6 +53,11 @@ const GetShopBooking = () => {
     }
   };
 
+  const filterBookingByStatus = (status: string | null) => {
+    setStatus(status);
+    console.log(myBookings);
+  };
+
   useEffect(() => {
     const customerId = isLoggedIn()?.id;
     const role = isLoggedIn()?.role;
@@ -67,7 +73,6 @@ const GetShopBooking = () => {
   }, []);
 
   const handleSearchData = (data: any) => {
-    console.log(data);
     setMyBookings(data);
   };
 
@@ -78,20 +83,48 @@ const GetShopBooking = () => {
           sendSearchDataToParent={handleSearchData}
           isCustomerBooking={true}
         />
-        <Button mx={2} px={6} variant={"outline"}>
+        <Button
+          mx={2}
+          px={6}
+          variant={"outline"}
+          disabled={status === "booked"}
+          onClick={() => filterBookingByStatus("booked")}
+        >
           Upcoming
         </Button>
-        <Button mx={2} px={6} variant={"outline"}>
+        <Button
+          mx={2}
+          px={6}
+          variant={"outline"}
+          disabled={status === "cancelled"}
+          onClick={() => filterBookingByStatus("cancelled")}
+        >
           Cancelled
         </Button>
-        <Button mx={2} px={6} variant={"outline"}>
+        <Button
+          mx={2}
+          px={6}
+          variant={"outline"}
+          disabled={status === "completed"}
+          onClick={() => filterBookingByStatus("completed")}
+        >
           Completed
+        </Button>
+        <Button
+          mx={2}
+          px={6}
+          variant={"outline"}
+          onClick={() => filterBookingByStatus(null)}
+        >
+          Clear Status
         </Button>
       </Box>
       <SimpleGrid columns={{ base: 1, md: 1, lg: 2 }} spacing={4} mt={8}>
-        {myBookings?.map((booking, index) => (
-          <MyBookingCard key={index} bookingDetails={booking} />
-        ))}
+        {myBookings
+          ?.filter((booking) => !status || booking.status === status)
+          .map((booking, index) => (
+            <MyBookingCard key={index} bookingDetails={booking} />
+          ))}
       </SimpleGrid>
     </div>
   );

@@ -59,6 +59,8 @@ const Search = ({ sendSearchDataToParent, isCustomerBooking = false }: any) => {
       );
 
       const data = await res.json();
+      console.log(data);
+
       if (res.ok) {
         sendSearchDataToParent(data.bookings);
         toast({
