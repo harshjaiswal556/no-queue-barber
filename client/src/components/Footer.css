@@ -12,9 +12,9 @@
 }
 
 .footer-input {
-    border: 1px solid var(--primary-border-color);
+    border: 1px solid var(--primary-border-color) !important;
 }
 
 .footer-input-icon {
-    border: 1px solid var(--primary-border-color);
+    border: 1px solid var(--primary-border-color) !important;
 }

@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Footer from "./components/Footer";
+import { Box } from "@chakra-ui/react";
 function App() {
   return (
     <BrowserRouter>
@@ -25,7 +26,9 @@ function App() {
           }
         />
       </Routes>
-      <Footer />
+      <Box className="mt-24">
+        <Footer />
+      </Box>
     </BrowserRouter>
   );
 }

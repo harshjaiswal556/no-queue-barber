@@ -35,7 +35,7 @@ const ShopsLanding = () => {
   const fetchAllShops = async () => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/list`
+        `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/list?limit=6`
       );
       const data = await res.json();
       if (res.ok) {

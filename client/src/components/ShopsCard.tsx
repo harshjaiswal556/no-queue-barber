@@ -36,7 +36,7 @@ const ShopsCard = ({
   return (
     <div>
       <Card
-        maxW={300}
+        w={300}
         m={5}
         className={!isView ? "shop-list-card" : "isview-shop-list-card"}
       >
@@ -50,6 +50,7 @@ const ShopsCard = ({
               alt={shop?.shopName}
               borderRadius="lg"
               className="shop-image"
+              maxH={175}
             />
           </div>
           <Stack mt="6" spacing="3">
