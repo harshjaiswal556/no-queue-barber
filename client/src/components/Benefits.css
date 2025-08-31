@@ -1,0 +1,6 @@
+@import url('../styles/Colors.css');
+
+.description {
+    color: var(--primary-description-color);
+    /* background: url("../assets/image1.jpg"); */
+}

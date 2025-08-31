@@ -1,7 +1,15 @@
 :root {
     --primary-foreground-color: #000;
     --secondary-foreground-color: #757575;
+
+    --secondary-heading-color: #494949;
+
+    --primary-description-color: #202020;
+
     --primary-background-color: #fff;
     --secondary-background-color: #ebebeb;
-    --primary-shadow-color: #44444433
+
+    --primary-shadow-color: #44444433;
+
+    --primary-border-color: #aaaaaa;
 }

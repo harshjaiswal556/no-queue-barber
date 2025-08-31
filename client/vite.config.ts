@@ -14,4 +14,7 @@ export default defineConfig({
       usePolling: true,
     },
   },
+    optimizeDeps: {
+    include: ["react-slick"],
+  },
 });

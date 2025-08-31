@@ -1,0 +1,20 @@
+@import url('../styles/Colors.css');
+
+.footer-container {
+    background-color: var(--secondary-background-color);
+    color: var(--primary-foreground-color);
+}
+
+.footer-list {
+    color: var(--primary-description-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-input {
+    border: 1px solid var(--primary-border-color);
+}
+
+.footer-input-icon {
+    border: 1px solid var(--primary-border-color);
+}

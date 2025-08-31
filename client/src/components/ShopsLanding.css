@@ -1,0 +1,22 @@
+.slick-active div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.shops-slider {
+    display: flex;
+    justify-content: center;
+    /* centers horizontally */
+    align-items: center;
+    /* centers vertically */
+    width: 100%;
+}
+
+.shops-slider .slick-slider {
+    width: 100%;
+    /* allow slider to expand */
+    max-width: 80rem;
+    /* same as 7xl in Tailwind (~1280px) */
+}

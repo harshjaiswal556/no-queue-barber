@@ -1,0 +1,17 @@
+@import url('./../styles/Colors.css');
+
+.heding-desc {
+    color: var(--secondary-heading-color);
+}
+
+.hero-description {
+    color: var(--secondary-foreground-color);
+}
+
+.home-hero {
+    background: url('../assets/barber-bg.jpg');
+    background-position: center;
+    background-size: cover;
+    /* display: flex;
+    justify-content: center; */
+}

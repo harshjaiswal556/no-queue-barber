@@ -57,10 +57,10 @@ const CreateShop = ({ onClose }: any) => {
     setSelectedServices((prev) => {
       if (prev[option]) {
         const newState = { ...prev };
-        delete newState[option]; 
+        delete newState[option];
         return newState;
       }
-      return { ...prev, [option]: { price: 0, time: 0 } }; 
+      return { ...prev, [option]: { price: 0, time: 0 } };
     });
   };
 
@@ -94,6 +94,7 @@ const CreateShop = ({ onClose }: any) => {
       let imageFileUrl = "";
 
       if (imageFile) {
+        debugger;
         const imageRef = ref(storage, `shops/${Date.now()}-${imageFile.name}`);
         await uploadBytes(imageRef, imageFile);
         imageFileUrl = await getDownloadURL(imageRef);

@@ -179,7 +179,7 @@ const getShopAvailabilityByShopId = async (req, res) => {
 
 const getAllShops = async (req, res) => {
   try {
-    const { zipcode, shopName, services } = req.query;
+    const { zipcode, shopName, services, page = 1, limit = 8 } = req.query;
 
     const filter = {};
 
@@ -201,15 +201,34 @@ const getAllShops = async (req, res) => {
       });
     }
 
-    const shops = await Shop.find(filter);
-    if (!shops) {
+    const perPage = Math.min(parseInt(limit) || 10, 20);
+    const currentPage = parseInt(page) || 1;
+
+    const shops = await Shop.find(filter)
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
+
+    const totalShops = await Shop.countDocuments(filter);
+
+    if (!shops || shops.length === 0) {
       return res.status(404).json({ message: "No shop found" });
     }
-    res.status(200).json({ message: "Shop found successfully", shops });
+
+    res.status(200).json({
+      message: "Shop found successfully",
+      shops,
+      pagination: {
+        total: totalShops,
+        page: currentPage,
+        perPage,
+        totalPages: Math.ceil(totalShops / perPage),
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 const getShopById = async (req, res) => {
   const id = req.params.id;
