@@ -101,7 +101,7 @@ const Search = ({ sendSearchDataToParent, isCustomerBooking = false }: any) => {
           type="submit"
           leftIcon={<Search2Icon />}
           className="submit-btn"
-          px={4}
+          px={6}
           ml={4}
         >
           Search

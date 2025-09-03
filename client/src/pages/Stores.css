@@ -1,0 +1,14 @@
+@import url('../styles/Colors.css');
+
+.selected-page{
+    border-color: #2C3E50;
+    color: #2C3E50;
+}
+
+.unselected-page{
+    border-color: transparent;
+    color: var(--secondary-foreground-color);
+}
+.unselected-page:hover{
+    color: var(--primary-description-color);
+}

@@ -15,8 +15,10 @@ import {
   Tag,
   Text,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 
 const MyBookingCard = ({ bookingDetails }: any) => {
@@ -25,7 +27,17 @@ const MyBookingCard = ({ bookingDetails }: any) => {
     onOpen: onMenuOpen,
     onClose: onMenuClose,
   } = useDisclosure();
+
+  const {
+    isOpen: isCancelOpen,
+    onOpen: onCancelOpen,
+    onClose: onCancelClose,
+  } = useDisclosure();
+
   const [shop, setShop] = useState<Shop>();
+  const toast = useToast();
+
+  const token = Cookies.get("token");
 
   console.log(bookingDetails);
 
@@ -48,6 +60,41 @@ const MyBookingCard = ({ bookingDetails }: any) => {
     const shopId = bookingDetails?.shop_id;
     getShopDetailsByShopId(shopId);
   }, [bookingDetails]);
+
+  const handleCancelSubmit = async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_SERVER_BASE_URL}api/bookings/cancel/${bookingDetails._id}`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+        }
+      );
+
+      const data = await res.json();
+      if (res.ok) {
+        toast({
+          title: data.message,
+          status: "success",
+          duration: 3000,
+        });
+        onCancelClose();
+        window.location.reload();
+      } else {
+        toast({
+          title: data.message,
+          status: "error",
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
   return (
     <>
       <Card
@@ -58,8 +105,8 @@ const MyBookingCard = ({ bookingDetails }: any) => {
       >
         <Badge
           position="absolute"
-          top="12px"
-          left="-35px"
+          top="19px"
+          left="-30px"
           zIndex={2}
           borderRadius="md"
           px={3}
@@ -67,7 +114,7 @@ const MyBookingCard = ({ bookingDetails }: any) => {
           transform="rotate(-45deg)"
           textAlign="center"
           fontWeight="semibold"
-          w="120px"
+          w="125px"
         >
           {bookingDetails?.status}
         </Badge>
@@ -89,7 +136,7 @@ const MyBookingCard = ({ bookingDetails }: any) => {
         )}
 
         <Stack>
-          <CardBody>
+          <CardBody pb={1}>
             <Heading size="md" mb={2}>
               {shop?.shopName}
             </Heading>
@@ -111,32 +158,34 @@ const MyBookingCard = ({ bookingDetails }: any) => {
             </Text>
           </CardBody>
 
-          <CardFooter>
-            {bookingDetails ? (
+          <CardFooter className="flex flex-wrap">
+            {bookingDetails && bookingDetails?.status!=='cancelled' ? (
               bookingDetails.payment_status === "pending" ? (
                 <Button
                   variant="solid"
-                  className="submit-btn mx-2"
-                  onClick={onMenuOpen}
+                  className="submit-btn m-1"
                 >
                   Pay Now
                 </Button>
               ) : (
-                <Button variant="outline" className="cursor-default mx-2">
+                <Button variant="outline" className="cursor-default m-1">
                   Paid
                 </Button>
               )
             ) : null}
             <Button
               variant="solid"
-              className="submit-btn mx-2"
+              className="submit-btn m-1"
               onClick={onMenuOpen}
             >
               Shop Details
             </Button>
-            <Button variant="solid" className="submit-btn mx-2">
+            {bookingDetails?.status === "completed" || bookingDetails?.status === "cancelled" ? (
+              null
+            ) : <Button variant="solid" className="submit-btn m-1" onClick={onCancelOpen}>
               Cancel Booking
             </Button>
+            }
           </CardFooter>
         </Stack>
       </Card>
@@ -146,6 +195,21 @@ const MyBookingCard = ({ bookingDetails }: any) => {
         <ModalContent w={310}>
           {shop && <ShopsCard shop={shop} isView={true} />}
           <Button onClick={onMenuClose}>Close</Button>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isCancelOpen} onClose={onCancelClose} size={"md"}>
+        <ModalOverlay />
+        <ModalContent w={310} className="p-6">
+          <Text className="mb-4">
+            Are you sure you want to cancel this booking?
+          </Text>
+          <div className="flex justify-between gap-4">
+            <Button variant="outline" onClick={onCancelClose}>
+              No
+            </Button>
+            <Button className="submit-btn" onClick={handleCancelSubmit}>Yes, Cancel it</Button>
+          </div>
         </ModalContent>
       </Modal>
     </>

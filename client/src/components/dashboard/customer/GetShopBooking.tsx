@@ -1,6 +1,6 @@
 import type { Bookings } from "@/models/bookings";
 import { isLoggedIn } from "@/utils/auth";
-import { Box, Button, SimpleGrid, useToast } from "@chakra-ui/react";
+import { Box, Button, SimpleGrid, Spinner, useToast } from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import MyBookingCard from "./MyBookingCard";
@@ -78,53 +78,61 @@ const GetShopBooking = () => {
 
   return (
     <div>
-      <Box className="flex">
+      <Box className="flex flex-wrap items-center gap-4">
+        <Box  minW="350px" flex="1">
+
         <Search
           sendSearchDataToParent={handleSearchData}
           isCustomerBooking={true}
-        />
-        <Button
-          mx={2}
-          px={6}
-          variant={"outline"}
-          disabled={status === "booked"}
-          onClick={() => filterBookingByStatus("booked")}
-        >
-          Upcoming
-        </Button>
-        <Button
-          mx={2}
-          px={6}
-          variant={"outline"}
-          disabled={status === "cancelled"}
-          onClick={() => filterBookingByStatus("cancelled")}
-        >
-          Cancelled
-        </Button>
-        <Button
-          mx={2}
-          px={6}
-          variant={"outline"}
-          disabled={status === "completed"}
-          onClick={() => filterBookingByStatus("completed")}
-        >
-          Completed
-        </Button>
-        <Button
-          mx={2}
-          px={6}
-          variant={"outline"}
-          onClick={() => filterBookingByStatus(null)}
-        >
-          Clear Status
-        </Button>
+          />
+          </Box>
+        <Box className="flex flex-wrap">
+          <Button
+            m={2}
+            px={{ lg: 6, sm: 3, base: 2 }}
+            variant={"outline"}
+            disabled={status === "booked"}
+            onClick={() => filterBookingByStatus("booked")}
+          >
+            Upcoming
+          </Button>
+          <Button
+            m={2}
+            px={{ lg: 6, sm: 3, base: 2 }}
+            variant={"outline"}
+            disabled={status === "cancelled"}
+            onClick={() => filterBookingByStatus("cancelled")}
+          >
+            Cancelled
+          </Button>
+          <Button
+            m={2}
+            px={{ lg: 6, sm: 3, base: 2 }}
+            variant={"outline"}
+            disabled={status === "completed"}
+            onClick={() => filterBookingByStatus("completed")}
+          >
+            Completed
+          </Button>
+          <Button
+            m={2}
+            px={{ lg: 6, sm: 3, base: 2 }}
+            variant={"outline"}
+            onClick={() => filterBookingByStatus(null)}
+          >
+            Clear Status
+          </Button>
+        </Box>
       </Box>
       <SimpleGrid columns={{ base: 1, md: 1, lg: 2 }} spacing={4} mt={8}>
-        {myBookings
-          ?.filter((booking) => !status || booking.status === status)
-          .map((booking, index) => (
-            <MyBookingCard key={index} bookingDetails={booking} />
-          ))}
+        {myBookings ? (
+          myBookings.filter((booking) => !status || booking.status === status)
+            .map((booking, index) => (
+              <MyBookingCard key={index} bookingDetails={booking} />
+            ))
+        ) : (
+          <Spinner />
+        )}
       </SimpleGrid>
     </div>
   );

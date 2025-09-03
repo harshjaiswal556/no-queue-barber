@@ -4,6 +4,8 @@ import type { Shop } from "@/models/shop";
 import { Box, Text, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
+import './Stores.css'
+
 const Stores = () => {
   const [shop, setShop] = useState<Shop[]>([]);
   const [limit, setLimit] = useState<number>(4);
@@ -84,8 +86,8 @@ const Stores = () => {
             <Text
               className={`inline-flex items-center border-t-2 pt-4 pr-1 text-sm font-medium ${
                 page === 1
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "text-gray-300 hover:text-gray-500 cursor-pointer"
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-500 hover:text-gray-700 cursor-pointer"
               }`}
               onClick={() => page > 1 && setPage(page - 1)}
             >
@@ -97,23 +99,23 @@ const Stores = () => {
                 className="mr-3 h-5 w-5 text-gray-300"
               >
                 <path
-                  fill-rule="evenodd"
+                  fillRule="evenodd"
                   d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
-                  clip-rule="evenodd"
+                  clipRule="evenodd"
                 ></path>
               </svg>
               Previous
             </Text>
           </div>
           <div className="hidden md:-mt-px md:flex">
-            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(
+            {Array.from({ length: pagination?.totalPages }, (_, i) => i + 1).map(
               (pageNum) => (
                 <Text
                   key={pageNum}
                   className={`inline-flex items-center border-t-2 px-4 pt-4 text-sm font-medium cursor-pointer ${
                     page === pageNum
-                      ? "border-violet-500 text-violet-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700"
+                      ? "selected-page"
+                      : "unselected-page"
                   }`}
                   onClick={() => setPage(pageNum)}
                 >
@@ -126,8 +128,8 @@ const Stores = () => {
             <Text
               className={`inline-flex items-center border-t-2 pt-4 pr-1 text-sm font-medium ${
                 page === pagination?.totalPages
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "text-gray-300 hover:text-gray-500 cursor-pointer"
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-500 hover:text-gray-700 cursor-pointer"
               }`}
               onClick={() => page < pagination?.totalPages && setPage(page + 1)}
             >
