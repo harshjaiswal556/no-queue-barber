@@ -1,5 +1,7 @@
 const Booking = require("../schema/booking");
 const Shop = require("../schema/shop");
+const Availability = require("../schema/availability");
+const dayjs = require("dayjs");
 
 const createBooking = async (req, res) => {
   const {
@@ -26,6 +28,49 @@ const createBooking = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Get shop availability to check total chairs
+    const availability = await Availability.findOne({ shop_id });
+    if (!availability) {
+      return res.status(404).json({ message: "Shop availability not found" });
+    }
+
+    // Check existing bookings for the same date and overlapping time slots
+    const existingBookings = await Booking.find({
+      shop_id,
+      date,
+      status: { $in: ["booked", "confirmed"] },
+    });
+
+    // Count chairs used during the requested time slot
+    const startTime = dayjs(`2023-01-01T${time_slot.start}`);
+    const endTime = dayjs(`2023-01-01T${time_slot.end}`);
+    
+    let maxChairsUsed = 0;
+    let current = startTime;
+    
+    while (current.isBefore(endTime)) {
+      let chairsUsedAtTime = 0;
+      
+      existingBookings.forEach(booking => {
+        const bookingStart = dayjs(`2023-01-01T${booking.time_slot.start}`);
+        const bookingEnd = dayjs(`2023-01-01T${booking.time_slot.end}`);
+        
+        if (current.isSameOrAfter(bookingStart) && current.isBefore(bookingEnd)) {
+          chairsUsedAtTime++;
+        }
+      });
+      
+      maxChairsUsed = Math.max(maxChairsUsed, chairsUsedAtTime);
+      current = current.add(1, 'minute');
+    }
+
+    // Check if there are available chairs
+    if (maxChairsUsed >= availability.totalChairs) {
+      return res.status(409).json({ 
+        message: "No chairs available for the selected time slot" 
+      });
+    }
+
     const booking = new Booking({
       shop_id,
       customer_id,
@@ -40,7 +85,7 @@ const createBooking = async (req, res) => {
     await booking.save();
     res.status(201).json({ message: "Booking created successfully", booking });
   } catch (error) {
-    res.status(500).json({ messgae: error });
+    res.status(500).json({ message: error.message });
   }
 };
 

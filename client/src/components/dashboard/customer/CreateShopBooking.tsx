@@ -43,6 +43,14 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
   const [slotDuration, setSlotDuration] = useState<number>(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [shopAvailability, setShopAvailability] = useState<any>([]);
+  const [bookedSlots, setBookedSlots] = useState<
+    { start: string; end: string }[]
+  >([]);
+  const [fullyBookedSlots, setFullyBookedSlots] = useState<string[]>([]);
+  const [slotChairCount, setSlotChairCount] = useState<Record<string, number>>(
+    {}
+  );
+  const [totalChairs, setTotalChairs] = useState<number>(0);
 
   const shopId = shop?._id;
   const customerId = isLoggedIn()?.id;
@@ -57,12 +65,31 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
     const end = dayjs(`2023-01-01T${endTime}`);
 
     while (current.isBefore(end)) {
-      slots.push(current.format("HH:mm"));
+      const slotStart = current.format("HH:mm");
+      const slotEnd = current.add(slotDuration, "minute").format("HH:mm");
+
+      // Check if any minute in this slot duration is fully booked
+      let isFullyBooked = false;
+      let tempCurrent = current;
+      const tempEnd = current.add(slotDuration, "minute");
+
+      while (tempCurrent.isBefore(tempEnd)) {
+        const timeKey = tempCurrent.format("HH:mm");
+        if (fullyBookedSlots.includes(timeKey)) {
+          isFullyBooked = true;
+          break;
+        }
+        tempCurrent = tempCurrent.add(1, "minute");
+      }
+
+      if (!isFullyBooked) {
+        slots.push(slotStart);
+      }
+
       current = current.add(slotDuration, "minute");
     }
     return slots;
   };
-
   const slots = generateSlots();
 
   const getShopServices = async () => {
@@ -89,25 +116,47 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
     setEndTime(timings?.end);
   };
 
+  const getChairsAvailable = (slotStart: string): number => {
+    const slotEnd = dayjs(slotStart, "HH:mm").add(slotDuration, "minute");
+    let maxChairsUsed = 0;
+
+    let current = dayjs(slotStart, "HH:mm");
+    while (current.isBefore(slotEnd)) {
+      const timeKey = current.format("HH:mm");
+      const chairsUsed = slotChairCount[timeKey] || 0;
+      maxChairsUsed = Math.max(maxChairsUsed, chairsUsed);
+      current = current.add(1, "minute");
+    }
+
+    return totalChairs - maxChairsUsed;
+  };
+
   const getShopAvailability = async () => {
     try {
-      const res = await fetch(
+      const url = new URL(
         `${
           import.meta.env.VITE_SERVER_BASE_URL
-        }api/shops/availability/${shopId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: "include",
-        }
+        }api/shops/availability/${shopId}`
       );
+      if (date) {
+        url.searchParams.append("date", date);
+      }
+
+      const res = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: "include",
+      });
       const data = await res.json();
 
       if (res.ok) {
         setShopAvailability(data.availability.day);
+        setFullyBookedSlots(data.fullyBookedSlots || []);
+        setSlotChairCount(data.slotChairCount || {});
+        setTotalChairs(data.totalChairs || 1);
       } else {
         alert(data.message || "Failed to fetch shop availability");
       }
@@ -132,6 +181,9 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
 
   useEffect(() => {
     shopTimings(selectedDay);
+    if (date) {
+      getShopAvailability();
+    }
   }, [date]);
 
   const toggleOption = (option: string) => {
@@ -317,16 +369,26 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
               </Flex>
               {slotDuration > 0 && (
                 <SimpleGrid columns={4} spacing={3}>
-                  {slots.map((slot) => (
-                    <Button
-                      key={slot}
-                      variant={selectedSlot === slot ? "solid" : "outline"}
-                      colorScheme={selectedSlot === slot ? "blue" : "gray"}
-                      onClick={() => setSelectedSlot(slot)}
-                    >
-                      {slot}
-                    </Button>
-                  ))}
+                  {slots.map((slot) => {
+                    const availableChairs = getChairsAvailable(slot);
+                    return (
+                      <Button
+                        key={slot}
+                        variant={selectedSlot === slot ? "solid" : "outline"}
+                        colorScheme={selectedSlot === slot ? "blue" : "gray"}
+                        onClick={() => setSelectedSlot(slot)}
+                        position="relative"
+                      >
+                        <Box>
+                          <Text fontSize="sm">{slot}</Text>
+                          <Text fontSize="xs" color="gray.500">
+                            {availableChairs} chair
+                            {availableChairs !== 1 ? "s" : ""} left
+                          </Text>
+                        </Box>
+                      </Button>
+                    );
+                  })}
                 </SimpleGrid>
               )}
               {selectedSlot && (
