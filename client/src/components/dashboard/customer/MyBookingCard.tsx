@@ -39,8 +39,6 @@ const MyBookingCard = ({ bookingDetails }: any) => {
 
   const token = Cookies.get("token");
 
-  console.log(bookingDetails);
-
   const getShopDetailsByShopId = async (shopId: string) => {
     try {
       const res = await fetch(
@@ -159,7 +157,7 @@ const MyBookingCard = ({ bookingDetails }: any) => {
           </CardBody>
 
           <CardFooter className="flex flex-wrap">
-            {bookingDetails && bookingDetails?.status!=='cancelled' ? (
+            {bookingDetails && bookingDetails?.status==='booked' ? (
               bookingDetails.payment_status === "pending" ? (
                 <Button
                   variant="solid"

@@ -10,6 +10,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Footer from "./components/Footer";
 import { Box } from "@chakra-ui/react";
+import Contact from "./pages/Contact";
 function App() {
   return (
     <BrowserRouter>
@@ -22,6 +23,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["barber", "customer"]}>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <ProtectedRoute allowedRoles={["barber", "customer"]}>
+              <Contact />
             </ProtectedRoute>
           }
         />

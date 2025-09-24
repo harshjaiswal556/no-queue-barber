@@ -43,9 +43,6 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
   const [slotDuration, setSlotDuration] = useState<number>(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [shopAvailability, setShopAvailability] = useState<any>([]);
-  const [bookedSlots, setBookedSlots] = useState<
-    { start: string; end: string }[]
-  >([]);
   const [fullyBookedSlots, setFullyBookedSlots] = useState<string[]>([]);
   const [slotChairCount, setSlotChairCount] = useState<Record<string, number>>(
     {}
@@ -66,9 +63,7 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
 
     while (current.isBefore(end)) {
       const slotStart = current.format("HH:mm");
-      const slotEnd = current.add(slotDuration, "minute").format("HH:mm");
 
-      // Check if any minute in this slot duration is fully booked
       let isFullyBooked = false;
       let tempCurrent = current;
       const tempEnd = current.add(slotDuration, "minute");

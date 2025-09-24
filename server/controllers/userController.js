@@ -1,5 +1,6 @@
 const generateToken = require('../middleware/token');
 const User = require('../schema/user');
+const logger = require('../utils/winston');
 
 const registerUser = async (req, res) => {
     const { name, email, password, phone, role } = req.body;

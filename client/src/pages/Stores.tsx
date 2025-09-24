@@ -8,7 +8,7 @@ import './Stores.css'
 
 const Stores = () => {
   const [shop, setShop] = useState<Shop[]>([]);
-  const [limit, setLimit] = useState<number>(4);
+  const [limit, setLimit] = useState<number>(8);
   const [page, setPage] = useState<number>(1);
   const [pagination, setPagination] = useState<any>();
 
@@ -90,6 +90,7 @@ const Stores = () => {
                   : "text-gray-500 hover:text-gray-700 cursor-pointer"
               }`}
               onClick={() => page > 1 && setPage(page - 1)}
+              tabIndex={page > 1 ? 0 : -1}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -118,6 +119,12 @@ const Stores = () => {
                       : "unselected-page"
                   }`}
                   onClick={() => setPage(pageNum)}
+                  tabIndex={page !== pageNum ? 0 : -1}
+                  onKeyUp={(e)=> {
+                    if(e.key === 'Enter' || e.key === ' ') {
+                      setPage(pageNum)
+                    }
+                  }}
                 >
                   {pageNum}
                 </Text>
@@ -132,6 +139,7 @@ const Stores = () => {
                   : "text-gray-500 hover:text-gray-700 cursor-pointer"
               }`}
               onClick={() => page < pagination?.totalPages && setPage(page + 1)}
+              tabIndex={page < pagination?.totalPages ? 0 : -1}
             >
               Next
               <svg

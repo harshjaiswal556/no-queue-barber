@@ -81,7 +81,7 @@ const Navbar = () => {
             <Link href="/stores" className="nav-link">
               Stores
             </Link>
-            <Link href="#" className="nav-link">
+            <Link href="/contact" className="nav-link">
               Contact
             </Link>
           </Flex>

@@ -28,20 +28,17 @@ const createBooking = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Get shop availability to check total chairs
     const availability = await Availability.findOne({ shop_id });
     if (!availability) {
       return res.status(404).json({ message: "Shop availability not found" });
     }
 
-    // Check existing bookings for the same date and overlapping time slots
     const existingBookings = await Booking.find({
       shop_id,
       date,
       status: { $in: ["booked", "confirmed"] },
     });
 
-    // Count chairs used during the requested time slot
     const startTime = dayjs(`2023-01-01T${time_slot.start}`);
     const endTime = dayjs(`2023-01-01T${time_slot.end}`);
     
@@ -64,7 +61,6 @@ const createBooking = async (req, res) => {
       current = current.add(1, 'minute');
     }
 
-    // Check if there are available chairs
     if (maxChairsUsed >= availability.totalChairs) {
       return res.status(409).json({ 
         message: "No chairs available for the selected time slot" 
@@ -119,11 +115,30 @@ const getBookingByCustomerId = async (req, res) => {
       return res.status(404).json({ message: "No bookings found" });
     }
 
+    const today = Date.now();
+    
+    bookings.forEach(element => {
+      if (dayjs(element.date).isBefore(dayjs(today), 'day') && element.status === 'booked') {
+        updateBookingStatus(element._id, 'completed');
+      }
+    });
+
     res.status(200).json({ bookings: bookings, message: "Booking found successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+const updateBookingStatus = async (bookingId, status) => {
+  try {
+    await Booking.findByIdAndUpdate(bookingId, { status }, {
+      new: true,
+      runValidators: true
+    });
+  } catch (error) {
+    console.error(`Failed to update booking status for ${bookingId}: ${error.message}`);
+  }
+}
 
 const cancelBookingByBookingId = async (req, res) => {
   const { booking_id } = req.params;

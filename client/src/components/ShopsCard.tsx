@@ -17,6 +17,7 @@ import {
 import "./ShopsCard.css";
 import Cookies from "js-cookie";
 import CreateShopBooking from "./dashboard/customer/CreateShopBooking";
+import { useState } from "react";
 
 const ShopsCard = ({
   shop,
@@ -33,11 +34,14 @@ const ShopsCard = ({
     onClose: onShopClose,
   } = useDisclosure();
 
+  const [isAddressExpanded, setIsAddressExpanded] = useState<Boolean>(false);
+
   return (
     <div>
       <Card
         w={300}
         m={5}
+        h={!isAddressExpanded ? (isView ? 350 : 385) : 'auto'}
         className={!isView ? "shop-list-card" : "isview-shop-list-card"}
       >
         <CardBody>
@@ -53,9 +57,9 @@ const ShopsCard = ({
               maxH={175}
             />
           </div>
-          <Stack mt="6" spacing="3">
+          <Stack mt="6" spacing="3" h={isAddressExpanded ? "auto" : 85} onClick={()=>setIsAddressExpanded(!isAddressExpanded)}>
             <Heading size="md">{shop?.shopName}</Heading>
-            <Text>
+            <Text noOfLines={isAddressExpanded ? undefined : 2}>
               {shop?.address} - {shop?.zipcode}
             </Text>
           </Stack>
