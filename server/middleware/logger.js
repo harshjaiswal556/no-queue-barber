@@ -1,4 +1,3 @@
-// middleware/httpLogger.js
 const morgan = require('morgan');
 const logger = require('../utils/winston');
 

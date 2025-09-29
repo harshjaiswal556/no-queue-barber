@@ -1,0 +1,7 @@
+.contact-section-container{
+    ul.chakra-wrap__list.css-acaoml{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+}

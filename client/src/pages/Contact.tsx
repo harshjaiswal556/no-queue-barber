@@ -24,7 +24,9 @@ import {
   MdFacebook,
   MdOutlineEmail,
 } from 'react-icons/md'
-import { BsGithub, BsDiscord, BsPerson } from 'react-icons/bs'
+import { BsGithub, BsDiscord, BsPerson } from 'react-icons/bs';
+
+import './Contact.css'
 
 export default function Contact() {
   return (
@@ -38,7 +40,7 @@ export default function Contact() {
           m={{ sm: 4, md: 16, lg: 10 }}
           p={{ sm: 5, md: 5, lg: 16 }}>
           <Box p={4}>
-            <Wrap spacing={{ base: 20, sm: 3, md: 5, lg: 20 }}>
+            <Wrap spacing={{ base: 20, sm: 3, md: 5, lg: 20 }} className='contact-section-container'>
               <WrapItem>
                 <Box>
                   <Heading>Contact</Heading>
@@ -144,7 +146,7 @@ export default function Contact() {
                         />
                       </FormControl>
                       <FormControl id="name" float="right">
-                        <Button variant="solid" bg="#0D74FF" color="white" _hover={{}}>
+                        <Button variant="solid" className='submit-btn' _hover={{}}>
                           Send Message
                         </Button>
                       </FormControl>
