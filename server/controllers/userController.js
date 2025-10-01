@@ -1,6 +1,7 @@
 const generateToken = require('../middleware/token');
 const User = require('../schema/user');
-const logger = require('../utils/winston');
+
+const bcrypt = require('bcryptjs');
 
 const registerUser = async (req, res) => {
     const { name, email, password, phone, role } = req.body;
@@ -13,10 +14,23 @@ const registerUser = async (req, res) => {
         if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
         }
+
         if (role !== 'barber' && role !== 'customer') {
             return res.status(400).json({ message: 'Role must be either barber or customer' });
         }
-        const newUser = new User({ name, email, password, phone, role });
+
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{8,}$/;
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({
+                message: 'Password must be at least 8 characters long, include one letter, one number, and one special character'
+            });
+        }
+
+
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(password, salt);
+
+        const newUser = new User({ name, email, password: hashPassword, phone, role });
 
         await newUser.save();
         res.status(201).json({
@@ -39,7 +53,8 @@ const loginUser = async (req, res) => {
 
     try {
         const user = await User.findOne({ email });
-        if (user && user.password === password) {
+        const isCorrectPassword = await bcrypt.compare(password, user.password);
+        if (user && isCorrectPassword) {
             const token = generateToken(user._id);
             res.cookie("token", token, {
                 httpOnly: false,

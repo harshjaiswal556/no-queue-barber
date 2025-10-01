@@ -1,6 +1,13 @@
 import type { Bookings } from "@/models/bookings";
 import { isLoggedIn } from "@/utils/auth";
-import { Box, Button, SimpleGrid, Spinner, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  SimpleGrid,
+  Spinner,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import MyBookingCard from "./MyBookingCard";
@@ -9,6 +16,7 @@ import Search from "@/components/Search";
 const GetShopBooking = () => {
   const [myBookings, setMyBookings] = useState<Bookings[]>();
   const [status, setStatus] = useState<string | null>();
+  const [loading, setLoading] = useState<Boolean>(false);
 
   const token = Cookies.get("token");
 
@@ -24,6 +32,7 @@ const GetShopBooking = () => {
         });
         return;
       }
+      setLoading(true);
       const res = await fetch(
         `${
           import.meta.env.VITE_SERVER_BASE_URL
@@ -45,8 +54,10 @@ const GetShopBooking = () => {
           status: "error",
           duration: 5000,
         });
+        setLoading(false);
       } else {
         setMyBookings(data.bookings);
+        setLoading(false);
       }
     } catch (error) {
       console.error(error);
@@ -55,7 +66,6 @@ const GetShopBooking = () => {
 
   const filterBookingByStatus = (status: string | null) => {
     setStatus(status);
-    console.log(myBookings);
   };
 
   useEffect(() => {
@@ -79,13 +89,12 @@ const GetShopBooking = () => {
   return (
     <div>
       <Box className="flex flex-wrap items-center gap-4">
-        <Box  minW="350px" flex="1">
-
-        <Search
-          sendSearchDataToParent={handleSearchData}
-          isCustomerBooking={true}
+        <Box minW="350px" flex="1">
+          <Search
+            sendSearchDataToParent={handleSearchData}
+            isCustomerBooking={true}
           />
-          </Box>
+        </Box>
         <Box className="flex flex-wrap">
           <Button
             m={2}
@@ -126,12 +135,15 @@ const GetShopBooking = () => {
       </Box>
       <SimpleGrid columns={{ base: 1, md: 1, lg: 2 }} spacing={4} mt={8}>
         {myBookings ? (
-          myBookings.filter((booking) => !status || booking.status === status)
+          myBookings
+            .filter((booking) => !status || booking.status === status)
             .map((booking, index) => (
               <MyBookingCard key={index} bookingDetails={booking} />
             ))
-        ) : (
+        ) : loading ? (
           <Spinner />
+        ) : (
+          <Text>No Bookings Found</Text>
         )}
       </SimpleGrid>
     </div>
