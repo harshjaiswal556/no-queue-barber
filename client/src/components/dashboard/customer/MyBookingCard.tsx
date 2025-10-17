@@ -1,5 +1,6 @@
 import ShopsCard from "@/components/ShopsCard";
 import type { Shop } from "@/models/shop";
+import { isLoggedIn } from "@/utils/auth";
 import {
   Badge,
   Button,
@@ -21,6 +22,12 @@ import dayjs from "dayjs";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 const MyBookingCard = ({ bookingDetails }: any) => {
   const {
     isOpen: isMenuOpen,
@@ -38,6 +45,7 @@ const MyBookingCard = ({ bookingDetails }: any) => {
   const toast = useToast();
 
   const token = Cookies.get("token");
+  const user = isLoggedIn();
 
   const getShopDetailsByShopId = async (shopId: string) => {
     try {
@@ -93,6 +101,80 @@ const MyBookingCard = ({ bookingDetails }: any) => {
       console.error(error);
     }
   }
+
+  const createOrder = async()=>{
+    const res = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}api/payment/create-order/${user?.id}`,{
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ booking_id: bookingDetails._id, amount: bookingDetails.amount, currency: "INR" }),
+    });
+    
+    const data = await res.json();
+
+    if(res.ok){
+      openRazorpayCheckout(data.razorpayOrder);
+    } else {
+      alert("Order creation failed");
+    }
+
+  }
+const openRazorpayCheckout = (orderData: any) => {
+  const options = {
+    key: import.meta.env.VITE_SERVER_RAZORPAY_KEY_ID,
+    amount: orderData.amount,
+    currency: orderData.currency,
+    name: "NoQueueBarber",
+    description: "Payment for Barber Shop",
+    order_id: orderData.id,
+
+    handler: async function (response: any) {
+      try {
+        const verifyRes = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}api/payment/verify-and-update`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+          }),
+        });
+
+        const verifyData = await verifyRes.json();
+        alert(verifyData.message);
+      } catch (error) {
+        console.error("Error verifying payment:", error);
+        alert("Payment succeeded but verification failed.");
+      }
+    },
+
+    prefill: {
+      name: "User Name",
+      email: "user@example.com",
+    },
+    theme: {
+      color: "#6366f1",
+    },
+  };
+
+  const razor = new window.Razorpay(options);
+
+  razor.on("payment.failed", function (response: any) {
+    alert("Payment failed: " + response.error.description);
+    console.error(response.error);
+  });
+
+  razor.open();
+};
+
+
+
   return (
     <>
       <Card
@@ -162,6 +244,7 @@ const MyBookingCard = ({ bookingDetails }: any) => {
                 <Button
                   variant="solid"
                   className="submit-btn m-1"
+                  onClick={createOrder}
                 >
                   Pay Now
                 </Button>
