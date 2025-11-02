@@ -1,5 +1,6 @@
 const { createLogger, format, transports } = require('winston');
 const path = require('path');
+const ip = require('ip');
 
 const logger = createLogger({
   level: 'info',
@@ -7,9 +8,10 @@ const logger = createLogger({
     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     format.errors({ stack: true }),
     format.printf(({ timestamp, level, message, stack }) => {
+      const serverIp = ip.address();
       return stack
-        ? `${timestamp} [${level}]: ${message} - ${stack}`
-        : `${timestamp} [${level}]: ${message}`;
+        ? `${timestamp} [${level}] ${message} - ${stack}`
+        : `${timestamp} [${level}] ${message}`;
     })
   ),
   transports: [
