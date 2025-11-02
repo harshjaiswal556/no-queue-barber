@@ -24,6 +24,8 @@ import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { isLoggedIn } from "@/utils/auth";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { bookingsAPI } from "@/api/bookingsApi";
+import { shopAPI } from "@/api/shopsApi";
 
 dayjs.extend(customParseFormat);
 
@@ -89,15 +91,15 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
 
   const getShopServices = async () => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/list/${shopId}`
-      );
-      const data = await res.json();
+      // const res = await fetch(
+      //   `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/list/${shopId}`
+      // );
+      const data = await shopAPI.getShopById(shopId);
 
-      if (res.ok) {
-        setShopServices(data.shop[0].services);
+      if (data.ok) {
+        setShopServices(data.data.shop[0].services);
       } else {
-        alert(data.message || "Failed to fetch shop services");
+        alert(data.data.message || "Failed to fetch shop services");
       }
     } catch (error) {
       alert("Error fetching shop services");
@@ -128,32 +130,19 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
 
   const getShopAvailability = async () => {
     try {
-      const url = new URL(
-        `${
-          import.meta.env.VITE_SERVER_BASE_URL
-        }api/shops/availability/${shopId}`
+      const data = await shopAPI.getShopAvailabilityByShopId(
+        shopId,
+        date,
+        token
       );
-      if (date) {
-        url.searchParams.append("date", date);
-      }
 
-      const res = await fetch(url.toString(), {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: "include",
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        setShopAvailability(data.availability.day);
-        setFullyBookedSlots(data.fullyBookedSlots || []);
-        setSlotChairCount(data.slotChairCount || {});
-        setTotalChairs(data.totalChairs || 1);
+      if (data.ok) {
+        setShopAvailability(data.data.availability.day);
+        setFullyBookedSlots(data.data.fullyBookedSlots || []);
+        setSlotChairCount(data.data.slotChairCount || {});
+        setTotalChairs(data.data.totalChairs || 1);
       } else {
-        alert(data.message || "Failed to fetch shop availability");
+        alert(data.data.message || "Failed to fetch shop availability");
       }
     } catch (error) {
       console.error("Error fetching shop availability:", error);
@@ -171,7 +160,6 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
       0
     );
     setSlotDuration(totalTime);
-    console.log("Total Slot Duration:", totalTime);
   }, [selectedServiceTime]);
 
   useEffect(() => {
@@ -235,7 +223,6 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
           .add(slotDuration, "minute")
           .format("HH:mm"),
       };
-      console.log(timeSlot);
 
       const bookingData = {
         shop_id: shopId,
@@ -251,29 +238,29 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
         payment_status: "pending",
       };
 
-      const res = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}api/bookings/create`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: "include",
-          body: JSON.stringify(bookingData),
-        }
-      );
+      // const res = await fetch(
+      //   `${import.meta.env.VITE_SERVER_BASE_URL}api/bookings/create`,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //     credentials: "include",
+      //     body: JSON.stringify(bookingData),
+      //   }
+      // );
 
-      const data = await res.json();
-      if (res.ok) {
+      const data = await bookingsAPI.createBooking(bookingData, token);
+      if (data.ok) {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "success",
           duration: 5000,
         });
       } else {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "error",
           duration: 5000,
         });

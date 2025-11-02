@@ -16,6 +16,7 @@ import Login from "./authentication/Login";
 import Signup from "./authentication/Signup";
 import { isLoggedIn } from "@/utils/auth";
 import { useNavigate } from "react-router-dom";
+import { usersApi } from "@/api/usersApi";
 
 const Navbar = () => {
   const {
@@ -40,18 +41,10 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}api/users/logout`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        }
-      );
-      const data = await res.json();
+      const data = await usersApi.logout();
       navigate("/");
       toast({
-        title: data.message,
+        title: data.data.message,
         status: "success",
         duration: 5000,
       });
@@ -117,24 +110,33 @@ const Navbar = () => {
         {isMenuOpen && (
           <Box pb={4} display={{ md: "none" }}>
             <Stack as="nav" spacing={4} className="px-4">
-              <Link href="#" className="nav-link">
+              <Link href="/" className="nav-link">
                 Home
               </Link>
-              <Link href="#" className="nav-link">
-                About
+              <Link href="/dashboard" className="nav-link">
+                Dashboard
               </Link>
-              <Link href="#" className="nav-link">
-                Services
+              <Link href="/stores" className="nav-link">
+                Stores
               </Link>
-              <Link href="#" className="nav-link">
+              <Link href="/contact" className="nav-link">
                 Contact
               </Link>
-              <Button variant="outline" onClick={onLoginOpen}>
-                Login
-              </Button>
-              <Button className="sign-up-btn" onClick={onSignupOpen}>
-                Sign Up
-              </Button>
+              {isUserLoggedIn ? (
+                <Button className="submit-btn" onClick={handleLogout}>
+                  {" "}
+                  Logout
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" onClick={onLoginOpen}>
+                    Login
+                  </Button>
+                  <Button className="sign-up-btn" onClick={onSignupOpen}>
+                    Sign Up
+                  </Button>
+                </>
+              )}
             </Stack>
           </Box>
         )}

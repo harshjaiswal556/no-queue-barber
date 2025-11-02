@@ -1,17 +1,12 @@
 import type { Bookings } from "@/models/bookings";
 import { isLoggedIn } from "@/utils/auth";
-import {
-  Box,
-  Button,
-  SimpleGrid,
-  Spinner,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
+import { Box, Button, SimpleGrid, Text, useToast } from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import MyBookingCard from "./MyBookingCard";
 import Search from "@/components/Search";
+import { bookingsAPI } from "@/api/bookingsApi";
+import Loading from "@/components/ui/Loading";
 
 const GetShopBooking = () => {
   const [myBookings, setMyBookings] = useState<Bookings[]>();
@@ -33,30 +28,17 @@ const GetShopBooking = () => {
         return;
       }
       setLoading(true);
-      const res = await fetch(
-        `${
-          import.meta.env.VITE_SERVER_BASE_URL
-        }api/bookings/list/customer/${customerId}`,
-        {
-          credentials: "include",
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = await res.json();
+      const data = await bookingsAPI.getBookingByCustomerId(customerId, token);
 
-      if (!res.ok) {
+      if (!data.ok) {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "error",
           duration: 5000,
         });
         setLoading(false);
       } else {
-        setMyBookings(data.bookings);
+        setMyBookings(data.data.bookings);
         setLoading(false);
       }
     } catch (error) {
@@ -141,7 +123,7 @@ const GetShopBooking = () => {
               <MyBookingCard key={index} bookingDetails={booking} />
             ))
         ) : loading ? (
-          <Spinner />
+          <Loading />
         ) : (
           <Text>No Bookings Found</Text>
         )}

@@ -9,7 +9,6 @@ import {
   Text,
   Input,
   IconButton,
-  useColorModeValue,
   Heading,
   List,
 } from "@chakra-ui/react";

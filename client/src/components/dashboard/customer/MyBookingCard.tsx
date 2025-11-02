@@ -1,3 +1,5 @@
+import { bookingsAPI } from "@/api/bookingsApi";
+import { shopAPI } from "@/api/shopsApi";
 import ShopsCard from "@/components/ShopsCard";
 import type { Shop } from "@/models/shop";
 import { isLoggedIn } from "@/utils/auth";
@@ -49,13 +51,10 @@ const MyBookingCard = ({ bookingDetails }: any) => {
 
   const getShopDetailsByShopId = async (shopId: string) => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/list/${shopId}`
-      );
-      const data = await res.json();
+      const data = await shopAPI.getShopById(shopId);
 
-      if (res.ok) {
-        setShop(data.shop[0]);
+      if (data.ok) {
+        setShop(data.data.shop[0]);
       }
     } catch (error) {
       console.error(error);
@@ -69,22 +68,27 @@ const MyBookingCard = ({ bookingDetails }: any) => {
 
   const handleCancelSubmit = async () => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}api/bookings/cancel/${bookingDetails._id}`,
-        {
-          method: "PUT",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-        }
-      );
+      // const res = await fetch(
+      //   `${import.meta.env.VITE_SERVER_BASE_URL}api/bookings/cancel/${
+      //     bookingDetails._id
+      //   }`,
+      //   {
+      //     method: "PUT",
+      //     credentials: "include",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   }
+      // );
 
-      const data = await res.json();
-      if (res.ok) {
+      const data = await bookingsAPI.cancelBookingByBookingId(
+        bookingDetails._id,
+        token
+      );
+      if (data.ok) {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "success",
           duration: 3000,
         });
@@ -92,7 +96,7 @@ const MyBookingCard = ({ bookingDetails }: any) => {
         window.location.reload();
       } else {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "error",
           duration: 3000,
         });
@@ -100,80 +104,91 @@ const MyBookingCard = ({ bookingDetails }: any) => {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
-  const createOrder = async()=>{
-    const res = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}api/payment/create-order/${user?.id}`,{
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ booking_id: bookingDetails._id, amount: bookingDetails.amount, currency: "INR" }),
-    });
-    
+  const createOrder = async () => {
+    const res = await fetch(
+      `${import.meta.env.VITE_SERVER_BASE_URL}api/payment/create-order/${
+        user?.id
+      }`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          booking_id: bookingDetails._id,
+          amount: bookingDetails.amount,
+          currency: "INR",
+        }),
+      }
+    );
+
     const data = await res.json();
 
-    if(res.ok){
+    if (res.ok) {
       openRazorpayCheckout(data.razorpayOrder);
     } else {
       alert("Order creation failed");
     }
-
-  }
-const openRazorpayCheckout = (orderData: any) => {
-  const options = {
-    key: import.meta.env.VITE_SERVER_RAZORPAY_KEY_ID,
-    amount: orderData.amount,
-    currency: orderData.currency,
-    name: "NoQueueBarber",
-    description: "Payment for Barber Shop",
-    order_id: orderData.id,
-
-    handler: async function (response: any) {
-      try {
-        const verifyRes = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}api/payment/verify-and-update`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-          }),
-        });
-
-        const verifyData = await verifyRes.json();
-        alert(verifyData.message);
-      } catch (error) {
-        console.error("Error verifying payment:", error);
-        alert("Payment succeeded but verification failed.");
-      }
-    },
-
-    prefill: {
-      name: "User Name",
-      email: "user@example.com",
-    },
-    theme: {
-      color: "#6366f1",
-    },
   };
+  const openRazorpayCheckout = (orderData: any) => {
+    const options = {
+      key: import.meta.env.VITE_SERVER_RAZORPAY_KEY_ID,
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: "NoQueueBarber",
+      description: "Payment for Barber Shop",
+      order_id: orderData.id,
 
-  const razor = new window.Razorpay(options);
+      handler: async function (response: any) {
+        try {
+          const verifyRes = await fetch(
+            `${
+              import.meta.env.VITE_SERVER_BASE_URL
+            }api/payment/verify-and-update`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            }
+          );
 
-  razor.on("payment.failed", function (response: any) {
-    alert("Payment failed: " + response.error.description);
-    console.error(response.error);
-  });
+          const verifyData = await verifyRes.json();
+          alert(verifyData.message);
+        } catch (error) {
+          console.error("Error verifying payment:", error);
+          alert("Payment succeeded but verification failed.");
+        }
+      },
 
-  razor.open();
-};
+      prefill: {
+        name: "User Name",
+        email: "user@example.com",
+      },
+      theme: {
+        color: "#6366f1",
+      },
+    };
 
+    const razor = new window.Razorpay(options);
 
+    razor.on("payment.failed", function (response: any) {
+      alert("Payment failed: " + response.error.description);
+      console.error(response.error);
+    });
+
+    razor.open();
+  };
 
   return (
     <>
@@ -239,7 +254,7 @@ const openRazorpayCheckout = (orderData: any) => {
           </CardBody>
 
           <CardFooter className="flex flex-wrap">
-            {bookingDetails && bookingDetails?.status==='booked' ? (
+            {bookingDetails && bookingDetails?.status === "booked" ? (
               bookingDetails.payment_status === "pending" ? (
                 <Button
                   variant="solid"
@@ -261,12 +276,16 @@ const openRazorpayCheckout = (orderData: any) => {
             >
               Shop Details
             </Button>
-            {bookingDetails?.status === "completed" || bookingDetails?.status === "cancelled" ? (
-              null
-            ) : <Button variant="solid" className="submit-btn m-1" onClick={onCancelOpen}>
-              Cancel Booking
-            </Button>
-            }
+            {bookingDetails?.status === "completed" ||
+            bookingDetails?.status === "cancelled" ? null : (
+              <Button
+                variant="solid"
+                className="submit-btn m-1"
+                onClick={onCancelOpen}
+              >
+                Cancel Booking
+              </Button>
+            )}
           </CardFooter>
         </Stack>
       </Card>
@@ -289,7 +308,9 @@ const openRazorpayCheckout = (orderData: any) => {
             <Button variant="outline" onClick={onCancelClose}>
               No
             </Button>
-            <Button className="submit-btn" onClick={handleCancelSubmit}>Yes, Cancel it</Button>
+            <Button className="submit-btn" onClick={handleCancelSubmit}>
+              Yes, Cancel it
+            </Button>
           </div>
         </ModalContent>
       </Modal>

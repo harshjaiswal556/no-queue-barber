@@ -1,3 +1,4 @@
+import { usersApi } from "@/api/usersApi";
 import {
   Button,
   Flex,
@@ -38,21 +39,16 @@ const Signup = ({ onClose }: any) => {
     };
 
     try {
-      const res = await fetch(`http://localhost:3000/api/users/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
-      const data = await res.json();
-      if (res.ok) {
+      const data = await usersApi.register(userData);
+      if (data.ok) {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "success",
           duration: 5000,
         });
       } else {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "error",
           duration: 5000,
         });

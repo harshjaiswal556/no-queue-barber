@@ -5,6 +5,8 @@ import Slider from "react-slick";
 import ShopsCard from "./ShopsCard";
 
 import "./ShopsLanding.css";
+import Loading from "./ui/Loading";
+import { shopAPI } from "@/api/shopsApi";
 
 const ShopsLanding = () => {
   const settings = {
@@ -30,22 +32,23 @@ const ShopsLanding = () => {
   };
 
   const [shop, setShop] = useState<Shop[]>([]);
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const fetchAllShops = async () => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/list?limit=6`
-      );
-      const data = await res.json();
-      if (res.ok) {
-        setShop(data.shops);
+      setLoading(true);
+      const data = await shopAPI.getAllShops();
+      if (data.ok) {
+        setShop(data.data.shops);
+        setLoading(false);
       } else {
         toast({
           title: "Error while loading shops",
           duration: 5000,
           status: "error",
         });
+        setLoading(false);
       }
     } catch (error) {
       console.error(error);
@@ -61,16 +64,20 @@ const ShopsLanding = () => {
       <Box className="flex justify-center mb-12 mt-32">
         <Heading as={"h3"}>Our Stores</Heading>
       </Box>
-      <div className="shops-slider">
-        <Box w={"100%"} maxW={"7xl"}>
-          <Slider {...settings}>
-            {shop &&
-              shop.map((shop, index) => (
-                <ShopsCard shop={shop} isView={false} key={index} />
-              ))}
-          </Slider>
-        </Box>
-      </div>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="shops-slider">
+          <Box w={"100%"} maxW={"7xl"}>
+            <Slider {...settings}>
+              {shop &&
+                shop.map((shop, index) => (
+                  <ShopsCard shop={shop} isView={false} key={index} />
+                ))}
+            </Slider>
+          </Box>
+        </div>
+      )}
     </>
   );
 };

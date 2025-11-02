@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/auth/authSlice";
 import { useNavigate } from "react-router-dom";
+import { usersApi } from "@/api/usersApi";
 
 const Login = ({ onClose }: any) => {
   const [email, setEmail] = useState("");
@@ -31,28 +32,19 @@ const Login = ({ onClose }: any) => {
     };
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}api/users/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(userData),
-        }
-      );
-      const data = await res.json();
-      if (res.ok) {
+      const data = await usersApi.login(userData);
+      if (data.ok) {
         navigate("/dashboard");
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "success",
           duration: 5000,
         });
 
-        dispatch(setUser(data.user));
+        dispatch(setUser(data.data.user));
       } else {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "error",
           duration: 5000,
         });
