@@ -33,6 +33,7 @@ import Cookies from "js-cookie";
 import type { RootState } from "../../../store/auth/authStore";
 import { storage } from "@/utils/firebase";
 import { services } from "@/models/services.data";
+import { shopAPI } from "@/api/shopsApi";
 
 const CreateShop = ({ onClose }: any) => {
   const [shopName, setShopName] = useState("");
@@ -111,26 +112,28 @@ const CreateShop = ({ onClose }: any) => {
         imageUrl: imageFileUrl,
       };
 
-      const res = await fetch(`http://localhost:3000/api/shops/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: "include",
-        body: JSON.stringify(shopData),
-      });
-      const data = await res.json();
+      // const res = await fetch(`http://localhost:3000/api/shops/create`, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      //   credentials: "include",
+      //   body: JSON.stringify(shopData),
+      // });
+      // const data = await res.json();
 
-      if (res.ok) {
+      const data = await shopAPI.createShop(shopData, token);
+
+      if (data.ok) {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "success",
           duration: 5000,
         });
       } else {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "error",
           duration: 5000,
         });

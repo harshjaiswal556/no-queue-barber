@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 
 import "./Barber.css";
+import { shopAPI } from "@/api/shopsApi";
 
 const Barber = () => {
   const {
@@ -39,11 +40,12 @@ const Barber = () => {
         });
         return;
       }
-      const res = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/barber/${userId}`
-      );
-      const data = await res.json();
-      setShop(data.shops);
+      // const res = await fetch(
+      //   `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/barber/${userId}`
+      // );
+      const data = await shopAPI.getShopByBarberId(userId);
+      // const data = await res.json();
+      setShop(data.data.shops);
     } catch (error) {
       console.error(error);
     }

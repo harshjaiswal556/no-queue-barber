@@ -4,7 +4,8 @@ import type { Shop } from "@/models/shop";
 import { Box, Text, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
-import './Stores.css'
+import "./Stores.css";
+import { shopAPI } from "@/api/shopsApi";
 
 const Stores = () => {
   const [shop, setShop] = useState<Shop[]>([]);
@@ -20,15 +21,11 @@ const Stores = () => {
 
   const fetchAllShops = async (limit: number, page: number) => {
     try {
-      const res = await fetch(
-        `${
-          import.meta.env.VITE_SERVER_BASE_URL
-        }api/shops/list?page=${page}&limit=${limit}`
-      );
-      const data = await res.json();
-      if (res.ok) {
-        setShop(data.shops);
-        setPagination(data.pagination);
+      let queryString = `?page=${page}&limit=${limit}`;
+      const data = await shopAPI.getAllShops(queryString);
+      if (data.ok) {
+        setShop(data.data.shops);
+        setPagination(data.data.pagination);
       } else {
         toast({
           title: "Error while loading shops",
@@ -109,27 +106,26 @@ const Stores = () => {
             </Text>
           </div>
           <div className="hidden md:-mt-px md:flex">
-            {Array.from({ length: pagination?.totalPages }, (_, i) => i + 1).map(
-              (pageNum) => (
-                <Text
-                  key={pageNum}
-                  className={`inline-flex items-center border-t-2 px-4 pt-4 text-sm font-medium cursor-pointer ${
-                    page === pageNum
-                      ? "selected-page"
-                      : "unselected-page"
-                  }`}
-                  onClick={() => setPage(pageNum)}
-                  tabIndex={page !== pageNum ? 0 : -1}
-                  onKeyUp={(e)=> {
-                    if(e.key === 'Enter' || e.key === ' ') {
-                      setPage(pageNum)
-                    }
-                  }}
-                >
-                  {pageNum}
-                </Text>
-              )
-            )}
+            {Array.from(
+              { length: pagination?.totalPages },
+              (_, i) => i + 1
+            ).map((pageNum) => (
+              <Text
+                key={pageNum}
+                className={`inline-flex items-center border-t-2 px-4 pt-4 text-sm font-medium cursor-pointer ${
+                  page === pageNum ? "selected-page" : "unselected-page"
+                }`}
+                onClick={() => setPage(pageNum)}
+                tabIndex={page !== pageNum ? 0 : -1}
+                onKeyUp={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    setPage(pageNum);
+                  }
+                }}
+              >
+                {pageNum}
+              </Text>
+            ))}
           </div>
           <div className="-mt-px flex w-0 flex-1 justify-end">
             <Text

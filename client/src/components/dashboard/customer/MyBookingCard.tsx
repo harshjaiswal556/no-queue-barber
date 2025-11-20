@@ -1,4 +1,5 @@
 import { bookingsAPI } from "@/api/bookingsApi";
+import { paymentAPI } from "@/api/payment";
 import { shopAPI } from "@/api/shopsApi";
 import ShopsCard from "@/components/ShopsCard";
 import type { Shop } from "@/models/shop";
@@ -68,20 +69,6 @@ const MyBookingCard = ({ bookingDetails }: any) => {
 
   const handleCancelSubmit = async () => {
     try {
-      // const res = await fetch(
-      //   `${import.meta.env.VITE_SERVER_BASE_URL}api/bookings/cancel/${
-      //     bookingDetails._id
-      //   }`,
-      //   {
-      //     method: "PUT",
-      //     credentials: "include",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   }
-      // );
-
       const data = await bookingsAPI.cancelBookingByBookingId(
         bookingDetails._id,
         token
@@ -107,29 +94,16 @@ const MyBookingCard = ({ bookingDetails }: any) => {
   };
 
   const createOrder = async () => {
-    const res = await fetch(
-      `${import.meta.env.VITE_SERVER_BASE_URL}api/payment/create-order/${
-        user?.id
-      }`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          booking_id: bookingDetails._id,
-          amount: bookingDetails.amount,
-          currency: "INR",
-        }),
-      }
-    );
+    const createOrderData = {
+      booking_id: bookingDetails._id,
+      amount: bookingDetails.amount,
+      currency: "INR",
+    };
 
-    const data = await res.json();
+    const data = await paymentAPI.createOrder(user?.id, createOrderData, token);
 
-    if (res.ok) {
-      openRazorpayCheckout(data.razorpayOrder);
+    if (data.ok) {
+      openRazorpayCheckout(data.data.razorpayOrder);
     } else {
       alert("Order creation failed");
     }
@@ -145,26 +119,17 @@ const MyBookingCard = ({ bookingDetails }: any) => {
 
       handler: async function (response: any) {
         try {
-          const verifyRes = await fetch(
-            `${
-              import.meta.env.VITE_SERVER_BASE_URL
-            }api/payment/verify-and-update`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              }),
-            }
+          const verifyPaymentData = {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+          };
+          // const verifyData = await verifyRes.json();
+          const verifyData = await paymentAPI.verifyPayment(
+            verifyPaymentData,
+            token
           );
-
-          const verifyData = await verifyRes.json();
-          alert(verifyData.message);
+          alert(verifyData.data.message);
         } catch (error) {
           console.error("Error verifying payment:", error);
           alert("Payment succeeded but verification failed.");

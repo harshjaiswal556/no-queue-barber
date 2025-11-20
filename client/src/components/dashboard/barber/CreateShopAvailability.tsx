@@ -1,3 +1,4 @@
+import { shopAPI } from "@/api/shopsApi";
 import { isLoggedIn } from "@/utils/auth";
 import {
   Box,
@@ -59,29 +60,34 @@ const CreateShopAvailability = ({ onClose, shopId, start, end }: any) => {
         totalChairs: seats,
       };
 
-      const res = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/availability`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-          credentials: "include",
-          body: JSON.stringify(availabilityData),
-        }
+      // const res = await fetch(
+      //   `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/availability`,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${user.token}`,
+      //     },
+      //     credentials: "include",
+      //     body: JSON.stringify(availabilityData),
+      //   }
+      // );
+
+      const data = await shopAPI.createShopAvailability(
+        availabilityData,
+        user.token
       );
 
-      const data = await res.json();
-      if (res.ok) {
+      // const data = await res.json();
+      if (data.ok) {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "success",
           duration: 5000,
         });
       } else {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "error",
           duration: 5000,
         });

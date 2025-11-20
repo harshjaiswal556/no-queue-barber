@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import Search from "./Search";
 import { useState } from "react";
+import { shopAPI } from "@/api/shopsApi";
 
 const Filters = ({ sendShopDataToParent }: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -62,20 +63,17 @@ const Filters = ({ sendShopDataToParent }: any) => {
       const queryString =
         queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
 
-      const res = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/list${queryString}`
-      );
-      const data = await res.json();
-      if (res.ok) {
-        sendShopDataToParent(data.shops);
+      const data = await shopAPI.getAllShops(queryString);
+      if (data.ok) {
+        sendShopDataToParent(data.data.shops);
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "success",
           duration: 5000,
         });
       } else {
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "error",
           duration: 5000,
         });

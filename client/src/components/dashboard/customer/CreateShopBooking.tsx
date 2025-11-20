@@ -91,9 +91,6 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
 
   const getShopServices = async () => {
     try {
-      // const res = await fetch(
-      //   `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/list/${shopId}`
-      // );
       const data = await shopAPI.getShopById(shopId);
 
       if (data.ok) {
@@ -237,20 +234,6 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
         ),
         payment_status: "pending",
       };
-
-      // const res = await fetch(
-      //   `${import.meta.env.VITE_SERVER_BASE_URL}api/bookings/create`,
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //     credentials: "include",
-      //     body: JSON.stringify(bookingData),
-      //   }
-      // );
-
       const data = await bookingsAPI.createBooking(bookingData, token);
       if (data.ok) {
         toast({
