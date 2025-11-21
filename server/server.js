@@ -22,12 +22,6 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
-
-app.options("*", cors({
-    origin: "https://no-queue-barber.vercel.app",
-    credentials: true
-}));
-
 app.use(httpLogger);
 app.use(cookieParser());
 app.use(express.json());
