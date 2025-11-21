@@ -9,7 +9,8 @@ import { shopAPI } from "@/api/shopsApi";
 
 const Stores = () => {
   const [shop, setShop] = useState<Shop[]>([]);
-  const [limit, setLimit] = useState<number>(8);
+  // const [limit, setLimit] = useState<number>(8);
+  const limit: number = 8;
   const [page, setPage] = useState<number>(1);
   const [pagination, setPagination] = useState<any>();
 

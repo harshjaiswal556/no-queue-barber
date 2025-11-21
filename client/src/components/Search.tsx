@@ -1,5 +1,4 @@
 import { bookingsAPI } from "@/api/bookingsApi";
-import { shopAPI } from "@/api/shopsApi";
 import { isLoggedIn } from "@/utils/auth";
 import { Search2Icon } from "@chakra-ui/icons";
 import { Button, Input, useToast } from "@chakra-ui/react";
@@ -20,7 +19,6 @@ const Search = ({ sendSearchDataToParent, isCustomerBooking = false }: any) => {
           import.meta.env.VITE_SERVER_BASE_URL
         }api/shops/list?shopName=${shopName}`
       );
-      let queryString = `?shopname=${shopName}`;
       const data = await res.json();
       // const data = await shopAPI.getAllShops(queryString);
       if (res.ok) {
