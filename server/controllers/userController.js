@@ -60,18 +60,21 @@ const loginUser = async (req, res) => {
                 httpOnly: false,
                 secure: true,
                 sameSite: "none",
+                domain: "https://no-queue-barber.vercel.app",
                 maxAge: 24 * 60 * 60 * 1000
             });
             res.cookie("role", user.role, {
                 httpOnly: false,
                 secure: true,
                 sameSite: "none",
+                domain: "https://no-queue-barber.vercel.app",
                 maxAge: 24 * 60 * 60 * 1000
             });
             res.cookie("_id", user.id, {
                 httpOnly: false,
                 secure: true,
                 sameSite: "none",
+                domain: "https://no-queue-barber.vercel.app",
                 maxAge: 24 * 60 * 60 * 1000
             });
             res.status(200).json({ message: 'Login successful', user, token: generateToken(user._id) });
