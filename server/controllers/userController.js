@@ -57,19 +57,19 @@ const loginUser = async (req, res) => {
         if (user && isCorrectPassword) {
             const token = generateToken(user._id);
             res.cookie("token", token, {
-                httpOnly: true,
+                httpOnly: false,
                 secure: true,
                 sameSite: "none",
                 maxAge: 24 * 60 * 60 * 1000
             });
             res.cookie("role", user.role, {
-                httpOnly: true,
+                httpOnly: false,
                 secure: true,
                 sameSite: "none",
                 maxAge: 24 * 60 * 60 * 1000
             });
             res.cookie("_id", user.id, {
-                httpOnly: true,
+                httpOnly: false,
                 secure: true,
                 sameSite: "none",
                 maxAge: 24 * 60 * 60 * 1000
