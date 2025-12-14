@@ -6,9 +6,10 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./src/db/conn');
 const shopRoutes = require('./src/routes/shop.route');
 const availabilityRoutes = require('./src/routes/availability.route');
+const httpLogger = require('../../middleware/logger');
 
 dotenv.config({ path: "./.env" });
-dotenv.config({path: "./services/shop-service/.env"})
+dotenv.config({ path: "./services/shop-service/.env" })
 
 const app = express();
 const port = process.env.SHOP_PORT;
@@ -22,6 +23,7 @@ app.use(cors({
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(httpLogger);
 
 connectDB();
 

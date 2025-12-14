@@ -4,10 +4,11 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const connectDB = require('./src/db/conn');
-const createPaymentRoutes = require('./src/routes/create-payment.route')
+const createPaymentRoutes = require('./src/routes/create-payment.route');
+const httpLogger = require('../../middleware/logger');
 
 dotenv.config({ path: "./.env" });
-dotenv.config({path: "./services/payment-service/.env"})
+dotenv.config({ path: "./services/payment-service/.env" })
 
 const app = express();
 const port = process.env.PAYMENT_PORT;
@@ -21,6 +22,7 @@ app.use(cors({
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(httpLogger);
 
 connectDB();
 

@@ -1,5 +1,6 @@
 const Razorpay = require("razorpay");
 const Payment = require("../schema/payment");
+const Booking = require("../../../../schema/booking");
 const dotenv = require('dotenv');
 const crypto = require("crypto");
 dotenv.config();
@@ -44,17 +45,17 @@ const verifyPayment = async (req, res) => {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
   const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
-    hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-    const generatedSignature = hmac.digest("hex");
+  hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+  const generatedSignature = hmac.digest("hex");
 
   if (generatedSignature === razorpay_signature) {
     await Payment.findOneAndUpdate(
-        { razorpay_order_id },
-        {
-          payment_id: razorpay_payment_id,
-          status: "paid",
-        }
-      );
+      { razorpay_order_id },
+      {
+        payment_id: razorpay_payment_id,
+        status: "paid",
+      }
+    );
 
     res.status(200).json({ message: "Payment verified successfully" });
   } else {
@@ -62,4 +63,22 @@ const verifyPayment = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, verifyPayment };
+
+const updatePaymentStatus = async (req, res) => {
+  const booking_id = req.params.id;
+  const { status } = req.body;
+  try {
+    const updatePayment = await Booking.findByIdAndUpdate({ _id: booking_id }, { status }, {
+      new: true,
+      runValidators: true
+    })
+    if (!cancelBooking) {
+      res.status(404).json({ message: "No booking found" })
+    }
+    res.status(200).json({ bookings: cancelBooking, message: "Booking cancelled successfully" })
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+module.exports = { createOrder, verifyPayment, updatePaymentStatus };
