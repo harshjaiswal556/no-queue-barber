@@ -1,8 +1,8 @@
 const Razorpay = require("razorpay");
 const Payment = require("../schema/payment");
+const Booking = require("../../../../schema/booking");
 const dotenv = require('dotenv');
 const crypto = require("crypto");
-const Booking = require("../schema/booking");
 dotenv.config();
 
 const razorpay = new Razorpay({
@@ -49,8 +49,6 @@ const verifyPayment = async (req, res) => {
   const generatedSignature = hmac.digest("hex");
 
   if (generatedSignature === razorpay_signature) {
-    // Mark payment as successful
-
     await Payment.findOneAndUpdate(
       { razorpay_order_id },
       {
@@ -64,6 +62,7 @@ const verifyPayment = async (req, res) => {
     res.status(400).json({ message: "Invalid signature, verification failed" });
   }
 };
+
 
 const updatePaymentStatus = async (req, res) => {
   const booking_id = req.params.id;
