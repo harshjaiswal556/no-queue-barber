@@ -1,9 +1,9 @@
 const { default: mongoose, get } = require("mongoose");
 const Shop = require("../schema/shop");
-const User = require("../../../../schema/user");
+const { findUserById } = require("../services/user.service");
 const Availability = require("../schema/availability");
-const Booking = require("../../../../schema/booking");
 const dayjs = require("dayjs");
+const { findBookingByShopId } = require("../services/booking.service");
 
 const createShopAvailability = async (req, res) => {
   const { barber_id, shop_id, day, totalChairs } = req.body;
@@ -13,7 +13,7 @@ const createShopAvailability = async (req, res) => {
       return res.status(400).json({ message: "All inputs are required" });
     }
 
-    const isBarberExists = await User.findById({ _id: barber_id });
+    const isBarberExists = await findUserById(barber_id);
 
     if (!isBarberExists) {
       return res.status(404).json({ message: "No user found" });
@@ -89,11 +89,7 @@ const getShopAvailabilityByShopId = async (req, res) => {
     }
 
     // Get all bookings for the specific shop and date
-    const bookings = await Booking.find({
-      shop_id: new mongoose.Types.ObjectId(id),
-      date: date,
-      status: { $in: ["booked", "confirmed"] },
-    });
+    const bookings = await findBookingByShopId(shop_id, date);
 
     // Group bookings by time slots and count chairs used
     const slotChairCount = {};
@@ -132,4 +128,4 @@ const getShopAvailabilityByShopId = async (req, res) => {
   }
 };
 
-module.exports = {createShopAvailability, getShopAvailabilityByShopId}
+module.exports = { createShopAvailability, getShopAvailabilityByShopId }

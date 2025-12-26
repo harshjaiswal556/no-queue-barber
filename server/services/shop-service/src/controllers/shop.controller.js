@@ -1,6 +1,6 @@
 const { default: mongoose, get } = require("mongoose");
 const Shop = require("../schema/shop");
-const User = require("../../../../schema/user");
+const { findUserById } = require("../services/user.service");
 
 const convertTo24HourFormat = (time) => {
   const [hour, minute] = time.split(":");
@@ -40,7 +40,7 @@ const createShop = async (req, res) => {
     ) {
       return res.status(400).json({ message: "All inputs are required" });
     }
-    const isBarberExists = await User.findById({ _id: barber_id });
+    const isBarberExists = await findUserById(barber_id);
 
     if (!isBarberExists) {
       return res.status(404).json({ message: "No user found" });

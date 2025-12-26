@@ -1,7 +1,7 @@
 const Booking = require("../schema/booking");
 const Shop = require("../../../../schema/shop");
-const Availability = require("../../../../schema/availability");
 const dayjs = require("dayjs");
+const { findAvailabilityByShopId } = require("../services/availability.service");
 
 const createBooking = async (req, res) => {
   const {
@@ -28,7 +28,7 @@ const createBooking = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const availability = await Availability.findOne({ shop_id });
+    const availability = await findAvailabilityByShopId(shop_id);
     if (!availability) {
       return res.status(404).json({ message: "Shop availability not found" });
     }
@@ -41,29 +41,29 @@ const createBooking = async (req, res) => {
 
     const startTime = dayjs(`2023-01-01T${time_slot.start}`);
     const endTime = dayjs(`2023-01-01T${time_slot.end}`);
-    
+
     let maxChairsUsed = 0;
     let current = startTime;
-    
+
     while (current.isBefore(endTime)) {
       let chairsUsedAtTime = 0;
-      
+
       existingBookings.forEach(booking => {
         const bookingStart = dayjs(`2023-01-01T${booking.time_slot.start}`);
         const bookingEnd = dayjs(`2023-01-01T${booking.time_slot.end}`);
-        
+
         if (current.isSameOrAfter(bookingStart) && current.isBefore(bookingEnd)) {
           chairsUsedAtTime++;
         }
       });
-      
+
       maxChairsUsed = Math.max(maxChairsUsed, chairsUsedAtTime);
       current = current.add(1, 'minute');
     }
 
     if (maxChairsUsed >= availability.totalChairs) {
-      return res.status(409).json({ 
-        message: "No chairs available for the selected time slot" 
+      return res.status(409).json({
+        message: "No chairs available for the selected time slot"
       });
     }
 
@@ -116,7 +116,7 @@ const getBookingByCustomerId = async (req, res) => {
     }
 
     const today = Date.now();
-    
+
     bookings.forEach(element => {
       if (dayjs(element.date).isBefore(dayjs(today), 'day') && element.status === 'booked') {
         updateBookingStatus(element._id, 'completed');
@@ -134,6 +134,14 @@ const updateBookingStatus = async (bookingId, status) => {
     await Booking.findByIdAndUpdate(bookingId, { status }, {
       new: true,
       runValidators: true
+    });
+    if (!updatedBooking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    res.status(200).json({
+      message: "Booking status updated successfully",
+      booking: updatedBooking
     });
   } catch (error) {
     console.error(`Failed to update booking status for ${bookingId}: ${error.message}`);
@@ -158,4 +166,33 @@ const cancelBookingByBookingId = async (req, res) => {
   }
 }
 
-module.exports = { createBooking, getBookingByCustomerId, cancelBookingByBookingId };
+const getBookingsByShopId = async (req, res) => {
+  const { shop_id } = req.params;
+  const { date, status } = req.query;
+
+  try {
+    const query = { shop_id };
+
+    if (date) {
+      query.date = date;
+    }
+
+    if (status) {
+      query.status = { $in: status.split(",") };
+    } else {
+      query.status = { $in: ["booked", "confirmed"] };
+    }
+
+    const bookings = await Booking.find(query);
+
+    res.status(200).json({
+      success: true,
+      count: bookings.length,
+      bookings
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { createBooking, getBookingByCustomerId, cancelBookingByBookingId, getBookingsByShopId, updateBookingStatus };
