@@ -65,7 +65,9 @@ const ShopsLanding = () => {
         <Heading as={"h3"}>Our Stores</Heading>
       </Box>
       {loading ? (
-        <Loading />
+        <div className="flex justify-center">
+          <Loading />
+        </div>
       ) : (
         <div className="shops-slider">
           <Box w={"100%"} maxW={"7xl"}>
