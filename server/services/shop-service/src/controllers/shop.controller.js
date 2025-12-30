@@ -46,7 +46,7 @@ const createShop = async (req, res) => {
       return res.status(404).json({ message: "No user found" });
     }
 
-    if (isBarberExists.role !== "barber") {
+    if (isBarberExists.user.role !== "barber") {
       return res
         .status(403)
         .json({ message: "Only barber can add shop details" });
@@ -89,7 +89,7 @@ const getShopByBarberId = async (req, res) => {
     const shops = await Shop.find({
       barber_id: new mongoose.Types.ObjectId(id),
     });
-    if (!shops) {
+    if (!shops || shops.length === 0) {
       return res.status(404).json({ message: "No shop found" });
     }
     res.status(200).json({ message: "Shop found successfully", shops });
@@ -155,7 +155,7 @@ const getShopById = async (req, res) => {
   const id = req.params.id;
   try {
     const shop = await Shop.find({ _id: new mongoose.Types.ObjectId(id) });
-    if (!shop) {
+    if (!shop || shop.length === 0) {
       return res.status(404).json({ message: "No shop found" });
     }
     res.status(200).json({ message: "Shop found successfully", shop });

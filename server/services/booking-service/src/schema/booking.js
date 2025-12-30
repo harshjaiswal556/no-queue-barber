@@ -30,7 +30,7 @@ const bookingSchema = mongoose.Schema({
         enum: ['booked', 'cancelled', 'completed'],
         required: true
     },
-    services:{
+    services: {
         type: [String],
         required: true
     },

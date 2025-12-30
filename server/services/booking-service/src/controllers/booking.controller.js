@@ -28,8 +28,11 @@ const createBooking = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const availability = await findAvailabilityByShopId(shop_id);
-    if (!availability) {
+    const token = req.headers.authorization.split(' ')[1];
+
+    const availability = await findAvailabilityByShopId(shop_id, token);
+
+    if (availability.status === 404) {
       return res.status(404).json({ message: "Shop availability not found" });
     }
 
@@ -185,6 +188,11 @@ const getBookingsByShopId = async (req, res) => {
 
     const bookings = await Booking.find(query);
 
+    if (!bookings || bookings.length === 0) {
+      res.status(404).json({ message: "No bookings found" });
+      return;
+    }
+
     res.status(200).json({
       success: true,
       count: bookings.length,
@@ -195,4 +203,4 @@ const getBookingsByShopId = async (req, res) => {
   }
 };
 
-module.exports = { createBooking, getBookingByCustomerId, cancelBookingByBookingId, getBookingsByShopId, updateBookingStatus };
+module.exports = { createBooking, getBookingByCustomerId, cancelBookingByBookingId, getBookingsByShopId };

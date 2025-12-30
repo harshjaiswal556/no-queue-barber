@@ -19,7 +19,10 @@ const createShopAvailability = async (req, res) => {
       return res.status(404).json({ message: "No user found" });
     }
 
-    if (isBarberExists.role !== "barber") {
+    console.log(isBarberExists);
+
+
+    if (isBarberExists.user.role !== "barber") {
       return res
         .status(403)
         .json({ message: "Only barber can add shop details" });
@@ -37,7 +40,7 @@ const createShopAvailability = async (req, res) => {
       return res.status(409).json({ message: "Shop data already present" });
     }
 
-    if (isShopExist.barber_id.toString() !== isBarberExists._id.toString()) {
+    if (isShopExist.barber_id.toString() !== isBarberExists.user._id.toString()) {
       return res.status(403).json({
         message: "Only shop owner can upload their shop availabilty details",
       });
