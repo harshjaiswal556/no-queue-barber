@@ -1,8 +1,8 @@
 const Razorpay = require("razorpay");
 const Payment = require("../schema/payment");
-const Booking = require("../../../../schema/booking");
 const dotenv = require('dotenv');
 const crypto = require("crypto");
+const { patchBookingStatus } = require("../services/booking.service");
 dotenv.config();
 
 const razorpay = new Razorpay({
@@ -67,15 +67,13 @@ const verifyPayment = async (req, res) => {
 const updatePaymentStatus = async (req, res) => {
   const booking_id = req.params.id;
   const { status } = req.body;
+  const token = req.headers.authorization.split(' ')[1];
   try {
-    const updatePayment = await Booking.findByIdAndUpdate({ _id: booking_id }, { status }, {
-      new: true,
-      runValidators: true
-    })
-    if (!cancelBooking) {
-      res.status(404).json({ message: "No booking found" })
+    const updatePayment = await patchBookingStatus(booking_id, status, token);
+    if (!updatePayment) {
+      res.status(404).json({ message: "No payment found" })
     }
-    res.status(200).json({ bookings: cancelBooking, message: "Booking cancelled successfully" })
+    res.status(200).json({ bookings: updatePayment, message: "Payment done successfully" })
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

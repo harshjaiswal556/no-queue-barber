@@ -53,6 +53,9 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
         const isCorrectPassword = await bcrypt.compare(password, user.password);
         if (user && isCorrectPassword) {
             const token = generateToken(user._id);
@@ -91,7 +94,6 @@ const logoutUser = async (req, res) => {
     res.clearCookie("_id");
     res.status(200).json({ message: "User logged out" })
 }
-
 
 module.exports = {
     registerUser,

@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 
 const connectDB = require('./src/db/conn');
 const authRoutes = require('./src/routes/auth.route');
+const userRoutes = require('./src/routes/user.route');
 const httpLogger = require('../../middleware/logger');
 
 dotenv.config({ path: "./.env" });
@@ -31,6 +32,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
