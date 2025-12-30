@@ -95,7 +95,6 @@ const CreateShop = ({ onClose }: any) => {
       let imageFileUrl = "";
 
       if (imageFile) {
-        debugger;
         const imageRef = ref(storage, `shops/${Date.now()}-${imageFile.name}`);
         await uploadBytes(imageRef, imageFile);
         imageFileUrl = await getDownloadURL(imageRef);
@@ -131,6 +130,7 @@ const CreateShop = ({ onClose }: any) => {
           status: "success",
           duration: 5000,
         });
+        onClose();
       } else {
         toast({
           title: data.data.message,

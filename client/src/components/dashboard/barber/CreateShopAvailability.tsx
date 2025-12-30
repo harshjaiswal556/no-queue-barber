@@ -85,6 +85,7 @@ const CreateShopAvailability = ({ onClose, shopId, start, end }: any) => {
           status: "success",
           duration: 5000,
         });
+        onClose();
       } else {
         toast({
           title: data.data.message,
