@@ -1,13 +1,15 @@
 
-const patchBookingStatus = async (bookingId, status, token) => {
+const patchBookingStatus = async (bookingId, payment_status, token) => {
     try {
-        const res = await fetch(`${process.env.BOOKING_SERVICE_URL}/api/bookings/status/${bookingId}`, {
+        console.log(bookingId, payment_status);
+
+        const res = await fetch(`${process.env.BOOKING_SERVICE_URL}/api/v1/bookings/status/${bookingId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ status })
+            body: JSON.stringify({ payment_status })
         });
 
         const data = await res.json();

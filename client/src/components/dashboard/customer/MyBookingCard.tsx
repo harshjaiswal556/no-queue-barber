@@ -129,6 +129,22 @@ const MyBookingCard = ({ bookingDetails }: any) => {
             verifyPaymentData,
             token
           );
+          if (verifyData.ok) {
+            await paymentAPI.updatePaymentStatus(bookingDetails._id, token);
+
+            toast({
+              title: verifyData.data.message,
+              status: "success",
+              duration: 3000,
+            });
+            window.location.reload();
+          } else {
+            toast({
+              title: verifyData.data.message,
+              status: "error",
+              duration: 3000,
+            });
+          }
           alert(verifyData.data.message);
         } catch (error) {
           console.error("Error verifying payment:", error);

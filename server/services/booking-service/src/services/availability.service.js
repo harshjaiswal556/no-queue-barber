@@ -13,8 +13,6 @@ const findAvailabilityByShopId = async (shopId, token) => {
         if (!res.ok) {
             return { status: res.status, message: 'Something went wrong' };
         }
-        console.log(res);
-
         return res.json();
     } catch (error) {
         console.log(error);

@@ -1,7 +1,11 @@
 import { apiClient } from "./apiClient";
 
+const BASE_URL = import.meta.env.VITE_SERVER_USER_SERVICE_URL;
+
 export const usersApi = {
-  logout: () => apiClient(`api/users/logout`, "POST"),
-  login: (body: any) => apiClient(`api/users/login`, "POST", body),
-  register: (body: any) => apiClient(`api/users/register`, "POST", body),
+  logout: () => apiClient(`${BASE_URL}/api/v1/auth/logout`, "POST"),
+  login: (body: any) =>
+    apiClient(`${BASE_URL}/api/v1/auth/login`, "POST", body),
+  register: (body: any) =>
+    apiClient(`${BASE_URL}/api/v1/auth/register`, "POST", body),
 };

@@ -98,9 +98,11 @@ const Barber = () => {
             lg: 16,
           }}
         >
-          {shop?.map((shop) => (
-            <ShopListingCard key={shop._id} shop={shop} />
-          ))}
+          {shop && shop.length > 0 ? (
+            shop?.map((shop) => <ShopListingCard key={shop._id} shop={shop} />)
+          ) : (
+            <Text>No Shops Found</Text>
+          )}
         </Box>
       </Box>
 
