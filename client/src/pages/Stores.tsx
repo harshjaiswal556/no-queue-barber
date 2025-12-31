@@ -42,7 +42,6 @@ const Stores = () => {
   useEffect(() => {
     fetchAllShops(limit, page);
   }, [limit, page]);
-  console.log(pagination);
 
   return (
     <div className="mt-32">

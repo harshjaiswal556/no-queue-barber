@@ -4,8 +4,6 @@ const BASE_URL = import.meta.env.VITE_SERVER_SHOP_SERVICE_URL;
 export const shopAPI = {
   getAllShops: (queryString?: string) => {
     if (queryString) {
-      console.log(queryString);
-
       return apiClient(`${BASE_URL}/api/v1/shop/list${queryString}`, "GET");
     }
     return apiClient(`${BASE_URL}/api/v1/shop/list?limit=6`, "GET");

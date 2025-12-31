@@ -40,8 +40,6 @@ const Signup = ({ onClose }: any) => {
 
     try {
       const data = await usersApi.register(userData);
-      console.log(data);
-
       if (data.ok) {
         toast({
           title: data.data.message,

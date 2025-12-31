@@ -1,7 +1,10 @@
 const Booking = require("../schema/booking");
 const Shop = require("../../../../schema/shop");
 const dayjs = require("dayjs");
+const isSameOrAfter = require("dayjs/plugin/isSameOrAfter");
 const { findAvailabilityByShopId } = require("../services/availability.service");
+
+dayjs.extend(isSameOrAfter);
 
 const createBooking = async (req, res) => {
   const {
@@ -54,6 +57,9 @@ const createBooking = async (req, res) => {
       existingBookings.forEach(booking => {
         const bookingStart = dayjs(`2023-01-01T${booking.time_slot.start}`);
         const bookingEnd = dayjs(`2023-01-01T${booking.time_slot.end}`);
+
+        console.log("Current time:", current.format());
+        console.log("Booking start time:", bookingStart.format());
 
         if (current.isSameOrAfter(bookingStart) && current.isBefore(bookingEnd)) {
           chairsUsedAtTime++;
@@ -150,6 +156,26 @@ const updateBookingStatus = async (bookingId, status) => {
     console.error(`Failed to update booking status for ${bookingId}: ${error.message}`);
   }
 }
+const updateBookingPaymentStatus = async (req, res) => {
+  const { booking_id } = req.params;
+  const payment_status = 'completed';
+  try {
+    const updatedBooking = await Booking.findByIdAndUpdate(booking_id, { payment_status }, {
+      new: true,
+      runValidators: true
+    });
+    if (!updatedBooking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    res.status(200).json({
+      message: "Booking status updated successfully",
+      booking: updatedBooking
+    });
+  } catch (error) {
+    console.error(`Failed to update booking status for ${booking_id}: ${error.message}`);
+  }
+}
 
 const cancelBookingByBookingId = async (req, res) => {
   const { booking_id } = req.params;
@@ -203,4 +229,4 @@ const getBookingsByShopId = async (req, res) => {
   }
 };
 
-module.exports = { createBooking, getBookingByCustomerId, cancelBookingByBookingId, getBookingsByShopId };
+module.exports = { createBooking, getBookingByCustomerId, cancelBookingByBookingId, getBookingsByShopId, updateBookingPaymentStatus };

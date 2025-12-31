@@ -1,4 +1,5 @@
 import { bookingsAPI } from "@/api/bookingsApi";
+import { shopAPI } from "@/api/shopsApi";
 import { isLoggedIn } from "@/utils/auth";
 import { Search2Icon } from "@chakra-ui/icons";
 import { Button, Input, useToast } from "@chakra-ui/react";
@@ -14,23 +15,25 @@ const Search = ({ sendSearchDataToParent, isCustomerBooking = false }: any) => {
 
   const searchAllShops = async () => {
     try {
-      const res = await fetch(
-        `${
-          import.meta.env.VITE_SERVER_BASE_URL
-        }api/shops/list?shopName=${shopName}`
-      );
-      const data = await res.json();
-      // const data = await shopAPI.getAllShops(queryString);
-      if (res.ok) {
-        sendSearchDataToParent(data.shops);
+      const queryString = `?shopName=${shopName}`;
+      // const res = await fetch(
+      //   `${
+      //     import.meta.env.VITE_SERVER_BASE_URL
+      //   }api/shops/list?shopName=${shopName}`
+      // );
+      // const data = await res.json();
+      const data = await shopAPI.getAllShops(queryString);
+      if (data.ok) {
+        sendSearchDataToParent(data.data.shops);
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "success",
           duration: 5000,
         });
       } else {
+        sendSearchDataToParent([]);
         toast({
-          title: data.message,
+          title: data.data.message,
           status: "error",
           duration: 5000,
         });

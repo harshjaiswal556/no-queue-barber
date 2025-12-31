@@ -1,4 +1,14 @@
-import { Box, Heading, Container, Text, Button, Stack, useDisclosure, Modal, ModalOverlay } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Container,
+  Text,
+  Button,
+  Stack,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+} from "@chakra-ui/react";
 
 import "./Home.css";
 import ShopsLanding from "@/components/ShopsLanding";
@@ -7,12 +17,13 @@ import { isLoggedIn } from "@/utils/auth";
 import Signup from "@/components/authentication/Signup";
 
 const Home = () => {
-  const role = isLoggedIn()?.role;
+  const isUserLoggedIn = isLoggedIn();
+  const role = isUserLoggedIn?.role;
   const {
-      isOpen: isSignupOpen,
-      onOpen: onSignupOpen,
-      onClose: onSignupClose,
-    } = useDisclosure();
+    isOpen: isSignupOpen,
+    onOpen: onSignupOpen,
+    onClose: onSignupClose,
+  } = useDisclosure();
   return (
     <Container maxW={"full"} px={0}>
       <div className="home-hero p-6 pt-0 mx-auto text-center h-[100vh] flex flex-col items-center justify-center">
@@ -41,17 +52,23 @@ const Home = () => {
             Find trusted barber shops near you, view availability, and book your
             slot instantly — no more waiting in line
           </Text>
-          <Stack
-            direction={"column"}
-            spacing={3}
-            align={"center"}
-            alignSelf={"center"}
-            position={"relative"}
-          >
-            <Button variant={"solid"} className="submit-btn" onClick={onSignupOpen}>
-              Join NoQueueBarber
-            </Button>
-          </Stack>
+          {!isUserLoggedIn && (
+            <Stack
+              direction={"column"}
+              spacing={3}
+              align={"center"}
+              alignSelf={"center"}
+              position={"relative"}
+            >
+              <Button
+                variant={"solid"}
+                className="submit-btn"
+                onClick={onSignupOpen}
+              >
+                Join NoQueueBarber
+              </Button>
+            </Stack>
+          )}
         </Stack>
       </div>
 

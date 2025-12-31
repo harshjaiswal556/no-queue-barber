@@ -19,9 +19,6 @@ const createShopAvailability = async (req, res) => {
       return res.status(404).json({ message: "No user found" });
     }
 
-    console.log(isBarberExists);
-
-
     if (isBarberExists.user.role !== "barber") {
       return res
         .status(403)
@@ -72,6 +69,7 @@ const createShopAvailability = async (req, res) => {
 const getShopAvailabilityByShopId = async (req, res) => {
   const id = req.params.id;
   const { date } = req.query;
+  const token = req.headers.authorization.split(' ')[1];
 
   try {
     const availability = await Availability.findOne({
@@ -92,12 +90,12 @@ const getShopAvailabilityByShopId = async (req, res) => {
     }
 
     // Get all bookings for the specific shop and date
-    const bookings = await findBookingByShopId(shop_id, date);
+    const bookings = await findBookingByShopId({ shop_id: id }, date, token);
 
     // Group bookings by time slots and count chairs used
     const slotChairCount = {};
 
-    bookings.forEach((booking) => {
+    bookings.bookings.forEach((booking) => {
       // For each minute in the booking duration, increment chair count
       const startTime = dayjs(`2023-01-01T${booking.time_slot.start}`);
       const endTime = dayjs(`2023-01-01T${booking.time_slot.end}`);

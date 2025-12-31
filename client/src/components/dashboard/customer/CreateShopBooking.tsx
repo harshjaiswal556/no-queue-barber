@@ -132,7 +132,6 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
         date,
         token
       );
-
       if (data.ok) {
         setShopAvailability(data.data.availability.day);
         setFullyBookedSlots(data.data.fullyBookedSlots || []);
@@ -213,7 +212,6 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
     }
 
     try {
-      console.log(selectedSlot?.toString());
       const timeSlot = {
         start: selectedSlot,
         end: dayjs(selectedSlot, "HH:mm")
@@ -241,6 +239,7 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
           status: "success",
           duration: 5000,
         });
+        onClose();
       } else {
         toast({
           title: data.data.message,

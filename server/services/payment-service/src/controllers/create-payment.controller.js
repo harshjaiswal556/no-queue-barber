@@ -66,10 +66,9 @@ const verifyPayment = async (req, res) => {
 
 const updatePaymentStatus = async (req, res) => {
   const booking_id = req.params.id;
-  const { status } = req.body;
   const token = req.headers.authorization.split(' ')[1];
   try {
-    const updatePayment = await patchBookingStatus(booking_id, status, token);
+    const updatePayment = await patchBookingStatus(booking_id, 'completed', token);
     if (!updatePayment) {
       res.status(404).json({ message: "No payment found" })
     }

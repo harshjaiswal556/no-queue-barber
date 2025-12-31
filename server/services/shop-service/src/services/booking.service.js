@@ -1,17 +1,22 @@
-const findBookingByShopId = async (shopId, date) => {
+const findBookingByShopId = async (shopId, date, token) => {
     try {
+
         // Construct URL with Query Parameters for date and status
-        const baseUrl = `${process.env.BOOKING_SERVICE_URL}/api/bookings/list/shop/${shopId}`;
+        const baseUrl = `${process.env.BOOKING_SERVICE_URL}/api/v1/bookings/list/shop/${shopId.shop_id}`;
         const queryParams = `?date=${date}&status=booked,confirmed`;
 
         const res = await fetch(`${baseUrl}${queryParams}`, {
-            method: 'GET'
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
         });
 
         const data = await res.json();
 
-        if (!res.ok) {
-            throw new Error(data.message || 'Failed to fetch bookings');
+        if (res.status === 404) {
+            return { bookings: [], message: 'No bookings found' };
         }
 
         return data;

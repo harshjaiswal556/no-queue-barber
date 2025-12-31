@@ -42,6 +42,7 @@ const Login = ({ onClose }: any) => {
         });
 
         dispatch(setUser(data.data.user));
+        onClose();
       } else {
         toast({
           title: data.data.message,
