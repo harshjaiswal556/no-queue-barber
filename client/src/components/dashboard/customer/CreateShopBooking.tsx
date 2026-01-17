@@ -222,6 +222,7 @@ const CreateShopBooking = ({ onClose, shop }: any) => {
       const bookingData = {
         shop_id: shopId,
         customer_id: customerId,
+        customer_name: localStorage.getItem("name"),
         date: date,
         time_slot: timeSlot,
         status: "booked",

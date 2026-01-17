@@ -10,6 +10,7 @@ const createBooking = async (req, res) => {
   const {
     shop_id,
     customer_id,
+    customer_name,
     date,
     time_slot,
     status,
@@ -21,6 +22,7 @@ const createBooking = async (req, res) => {
     if (
       !shop_id ||
       !customer_id ||
+      !customer_name ||
       !date ||
       !time_slot ||
       !status ||
@@ -79,6 +81,7 @@ const createBooking = async (req, res) => {
     const booking = new Booking({
       shop_id,
       customer_id,
+      customer_name,
       date,
       time_slot,
       status,

@@ -42,6 +42,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       const data = await usersApi.logout();
+      localStorage.clear();
       navigate("/");
       toast({
         title: data.data.message,

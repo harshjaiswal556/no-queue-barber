@@ -33,6 +33,7 @@ const Login = ({ onClose }: any) => {
 
     try {
       const data = await usersApi.login(userData);
+      localStorage.setItem("name", data.data.user.name);
       if (data.ok) {
         navigate("/dashboard");
         toast({
