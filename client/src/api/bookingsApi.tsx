@@ -30,4 +30,12 @@ export const bookingsAPI = {
 
   createBooking: (body: any, token?: string) =>
     apiClient(`${BOOKING_URL}/create`, "POST", body, token),
+
+  getBookingsByShopId: (id: string, queryString?: string, token?: string) =>
+    apiClient(
+      `${BOOKING_URL}/list/shop/${id}?${queryString}`,
+      "GET",
+      undefined,
+      token
+    ),
 };

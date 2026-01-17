@@ -197,10 +197,13 @@ const cancelBookingByBookingId = async (req, res) => {
 
 const getBookingsByShopId = async (req, res) => {
   const { shop_id } = req.params;
-  const { date, status } = req.query;
+  const { date, status, limit, page } = req.query;
 
   try {
     const query = { shop_id };
+
+    const perPage = Math.min(parseInt(limit) || 10, 20);
+    const currentPage = parseInt(page) || 1;
 
     if (date) {
       query.date = date;
@@ -209,10 +212,11 @@ const getBookingsByShopId = async (req, res) => {
     if (status) {
       query.status = { $in: status.split(",") };
     } else {
-      query.status = { $in: ["booked", "confirmed"] };
+      query.status = { $in: ["booked", "confirmed", "completed"] };
     }
 
-    const bookings = await Booking.find(query);
+    const bookings = await Booking.find(query).skip((currentPage - 1) * perPage)
+      .limit(perPage);
 
     if (!bookings || bookings.length === 0) {
       res.status(404).json({ message: "No bookings found" });

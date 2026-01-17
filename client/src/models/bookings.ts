@@ -9,5 +9,6 @@ export interface Bookings{
     status: string,
     services: string[],
     amount: number,
-    payment_status: string
+    payment_status: string,
+    customer_name?: string
 }

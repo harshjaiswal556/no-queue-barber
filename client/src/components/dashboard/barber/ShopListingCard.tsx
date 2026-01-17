@@ -15,12 +15,19 @@ import {
 } from "@chakra-ui/react";
 import "./ShopListingCard.css";
 import CreateShopAvailability from "./CreateShopAvailability";
+import ViewBookings from "./ViewBookings";
 
 const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
   const {
     isOpen: isMenuOpen,
     onOpen: onMenuOpen,
     onClose: onMenuClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isBookingMenuOpen,
+    onOpen: onBookingMenuOpen,
+    onClose: onBookingMenuClose,
   } = useDisclosure();
 
   return (
@@ -70,9 +77,16 @@ const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
             </Text>
           </CardBody>
 
-          <CardFooter>
+          <CardFooter className="gap-3 flex-wrap">
             <Button variant="solid" className="submit-btn" onClick={onMenuOpen}>
               Add Availability
+            </Button>
+            <Button
+              variant="solid"
+              className="submit-btn"
+              onClick={onBookingMenuOpen}
+            >
+              View Bookings
             </Button>
           </CardFooter>
         </Stack>
@@ -86,6 +100,15 @@ const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
           start={shop?.workingHours.start}
           end={shop?.workingHours.end}
         />
+      </Modal>
+
+      <Modal
+        isOpen={isBookingMenuOpen}
+        onClose={onBookingMenuClose}
+        size={"full"}
+      >
+        <ModalOverlay />
+        <ViewBookings shopId={shop?._id} shopName={shop?.shopName} />
       </Modal>
     </>
   );
