@@ -13,20 +13,27 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-import { useState } from "react";
+import { useRef } from "react";
 
 const Signup = ({ onClose }: any) => {
   const toast = useToast();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [role, setRole] = useState("customer");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
+  const roleRef = useRef<HTMLSelectElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const name = nameRef.current?.value;
+    const email = emailRef.current?.value;
+    const phone = phoneRef.current?.value;
+    const role = roleRef.current?.value;
+    const password = passwordRef.current?.value;
+    const confirmPassword = confirmPasswordRef.current?.value;
 
     if (password !== confirmPassword) return alert("Password is not matching");
 
@@ -72,8 +79,7 @@ const Signup = ({ onClose }: any) => {
                 type="name"
                 className="custom-input"
                 placeholder="Enter Full Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                ref={nameRef}
               />
             </Flex>
             <Flex mb={2}>
@@ -81,8 +87,7 @@ const Signup = ({ onClose }: any) => {
                 type="email"
                 className="custom-input"
                 placeholder="Enter Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                ref={emailRef}
               />
             </Flex>
             <Flex gap={4} mb={2}>
@@ -90,13 +95,12 @@ const Signup = ({ onClose }: any) => {
                 type="text"
                 className="custom-input"
                 placeholder="Enter Contact Number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                ref={phoneRef}
               />
               <Select
                 className="custom-input"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
+                placeholder="Enter Role"
+                ref={roleRef}
               >
                 <option value="Enter Role" disabled selected>
                   Enter Role
@@ -110,15 +114,13 @@ const Signup = ({ onClose }: any) => {
                 type="password"
                 className="custom-input"
                 placeholder="Enter Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                ref={passwordRef}
               />
               <Input
                 type="password"
                 className="custom-input"
                 placeholder="Enter Same Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                ref={confirmPasswordRef}
               />
             </Flex>
           </FormControl>

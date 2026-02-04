@@ -9,15 +9,15 @@ import {
   ModalHeader,
   useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useRef } from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import { usersApi } from "@/api/usersApi";
 
 const Login = ({ onClose }: any) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   const toast = useToast();
   const dispatch = useDispatch();
@@ -25,6 +25,9 @@ const Login = ({ onClose }: any) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const email = emailRef.current?.value;
+    const password = passwordRef.current?.value;
 
     const userData = {
       email,
@@ -69,16 +72,14 @@ const Login = ({ onClose }: any) => {
               type="email"
               className="custom-input"
               placeholder="Enter Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              ref={emailRef}
             />
             <Input
               mt={2}
               type="password"
               className="custom-input"
               placeholder="Enter Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              ref={passwordRef}
             />
           </FormControl>
         </ModalBody>

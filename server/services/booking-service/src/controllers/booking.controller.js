@@ -143,7 +143,7 @@ const getBookingByCustomerId = async (req, res) => {
 
 const updateBookingStatus = async (bookingId, status) => {
   try {
-    await Booking.findByIdAndUpdate(bookingId, { status }, {
+    const updatedBooking = await Booking.findByIdAndUpdate(bookingId, { status }, {
       new: true,
       runValidators: true
     });
