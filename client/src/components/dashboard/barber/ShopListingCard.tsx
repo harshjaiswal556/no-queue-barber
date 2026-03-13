@@ -16,6 +16,8 @@ import {
 import "./ShopListingCard.css";
 import CreateShopAvailability from "./CreateShopAvailability";
 import ViewBookings from "./ViewBookings";
+import { useEffect } from "react";
+import { shopAPI } from "@/api/shopsApi";
 
 const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
   const {
@@ -29,6 +31,17 @@ const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
     onOpen: onBookingMenuOpen,
     onClose: onBookingMenuClose,
   } = useDisclosure();
+
+  const checkShopAvailability = async (shopId: string) => {
+    const isShopAvailable = await shopAPI.checkAvailabilityByShopId(shopId);
+    console.log(isShopAvailable);
+
+    return isShopAvailable;
+  };
+  useEffect(() => {
+    if (!shop) return;
+    checkShopAvailability(shop._id);
+  }, []);
 
   return (
     <>

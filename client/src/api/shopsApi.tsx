@@ -27,4 +27,7 @@ export const shopAPI = {
 
   getShopByBarberId: (id: string) =>
     apiClient(`${BASE_URL}/api/v1/shop/barber/${id}`, "GET"),
+
+  checkAvailabilityByShopId: (id: string) =>
+    apiClient(`${BASE_URL}/api/v1/check-shop-availability/${id}`, "GET"),
 };

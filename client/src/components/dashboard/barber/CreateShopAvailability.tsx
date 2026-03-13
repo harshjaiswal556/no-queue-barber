@@ -60,22 +60,9 @@ const CreateShopAvailability = ({ onClose, shopId, start, end }: any) => {
         totalChairs: seats,
       };
 
-      // const res = await fetch(
-      //   `${import.meta.env.VITE_SERVER_BASE_URL}api/shops/availability`,
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Authorization: `Bearer ${user.token}`,
-      //     },
-      //     credentials: "include",
-      //     body: JSON.stringify(availabilityData),
-      //   }
-      // );
-
       const data = await shopAPI.createShopAvailability(
         availabilityData,
-        user.token
+        user.token,
       );
 
       // const data = await res.json();

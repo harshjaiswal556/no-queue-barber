@@ -38,6 +38,7 @@ const GetShopBooking = () => {
         });
         setLoading(false);
       } else {
+        data.data.bookings.reverse();
         setMyBookings(data.data.bookings);
         setLoading(false);
       }
