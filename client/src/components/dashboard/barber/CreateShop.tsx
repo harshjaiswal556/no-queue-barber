@@ -25,13 +25,12 @@ import TimePicker from "react-time-picker";
 import { BeatLoader } from "react-spinners";
 import "react-time-picker/dist/TimePicker.css";
 import "react-clock/dist/Clock.css";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import "./CreateShop.css";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import type { RootState } from "../../../store/auth/authStore";
-import { storage } from "@/utils/firebase";
+import { uploadImageToCloudinary } from "@/utils/cloudinary";
 import { services } from "@/models/services.data";
 import { shopAPI } from "@/api/shopsApi";
 
@@ -68,7 +67,7 @@ const CreateShop = ({ onClose }: any) => {
   const updateServiceDetail = (
     serviceName: string,
     field: "price" | "time",
-    value: number
+    value: number,
   ) => {
     setSelectedServices((prev) => ({
       ...prev,
@@ -95,9 +94,7 @@ const CreateShop = ({ onClose }: any) => {
       let imageFileUrl = "";
 
       if (imageFile) {
-        const imageRef = ref(storage, `shops/${Date.now()}-${imageFile.name}`);
-        await uploadBytes(imageRef, imageFile);
-        imageFileUrl = await getDownloadURL(imageRef);
+        imageFileUrl = await uploadImageToCloudinary(imageFile);
       }
 
       const shopData = {
@@ -110,17 +107,6 @@ const CreateShop = ({ onClose }: any) => {
         end: shopEnd,
         imageUrl: imageFileUrl,
       };
-
-      // const res = await fetch(`http://localhost:3000/api/shops/create`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      //   credentials: "include",
-      //   body: JSON.stringify(shopData),
-      // });
-      // const data = await res.json();
 
       const data = await shopAPI.createShop(shopData, token);
 
@@ -245,7 +231,7 @@ const CreateShop = ({ onClose }: any) => {
                                   updateServiceDetail(
                                     option,
                                     "price",
-                                    Number(e.target.value)
+                                    Number(e.target.value),
                                   )
                                 }
                                 w="70px"
@@ -259,7 +245,7 @@ const CreateShop = ({ onClose }: any) => {
                                   updateServiceDetail(
                                     option,
                                     "time",
-                                    Number(e.target.value)
+                                    Number(e.target.value),
                                   )
                                 }
                                 w="60px"

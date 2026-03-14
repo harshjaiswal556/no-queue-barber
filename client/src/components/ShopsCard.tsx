@@ -16,7 +16,6 @@ import {
 } from "@chakra-ui/react";
 
 import "./ShopsCard.css";
-import Cookies from "js-cookie";
 import CreateShopBooking from "./dashboard/customer/CreateShopBooking";
 import { useState } from "react";
 import { isLoggedIn } from "@/utils/auth";
