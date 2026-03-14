@@ -71,7 +71,7 @@ const MyBookingCard = ({ bookingDetails }: any) => {
     try {
       const data = await bookingsAPI.cancelBookingByBookingId(
         bookingDetails._id,
-        token
+        token,
       );
       if (data.ok) {
         toast({
@@ -127,10 +127,13 @@ const MyBookingCard = ({ bookingDetails }: any) => {
           // const verifyData = await verifyRes.json();
           const verifyData = await paymentAPI.verifyPayment(
             verifyPaymentData,
-            token
+            token,
           );
           if (verifyData.ok) {
-            await paymentAPI.updatePaymentStatus(bookingDetails._id, token);
+            await bookingsAPI.updateBookingPaymentStatus(
+              bookingDetails._id,
+              token,
+            );
 
             toast({
               title: verifyData.data.message,

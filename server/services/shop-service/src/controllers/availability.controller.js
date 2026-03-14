@@ -131,13 +131,12 @@ const getShopAvailabilityByShopId = async (req, res) => {
 
 const checkAvailabilityByShopId = async (req, res) => {
   const id = req.params.id;
-
   try {
-    const isShopExist = await Shop.findOne({ shop_id: id });
+    const isShopExist = await Availability.findOne({ shop_id: id });
     if (!isShopExist) {
-      return res.status(404).json({ message: "No shop found" });
+      return res.status(200).json({ isShopAvailabilityAdded: false, message: "No shop found" });
     }
-    res.status(200).json({ message: "Shop found successfully", isShopExist });
+    res.status(200).json({ message: "Shop found successfully", isShopAvailabilityAdded: true });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: error.message });

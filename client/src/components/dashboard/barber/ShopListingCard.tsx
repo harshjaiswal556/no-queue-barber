@@ -16,10 +16,13 @@ import {
 import "./ShopListingCard.css";
 import CreateShopAvailability from "./CreateShopAvailability";
 import ViewBookings from "./ViewBookings";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { shopAPI } from "@/api/shopsApi";
+import { isLoggedIn } from "@/utils/auth";
 
 const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
+  const user = isLoggedIn();
+  const [isAvailabilityAdded, setIsAvailabilityAdded] = useState(false);
   const {
     isOpen: isMenuOpen,
     onOpen: onMenuOpen,
@@ -33,14 +36,19 @@ const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
   } = useDisclosure();
 
   const checkShopAvailability = async (shopId: string) => {
-    const isShopAvailable = await shopAPI.checkAvailabilityByShopId(shopId);
-    console.log(isShopAvailable);
-
-    return isShopAvailable;
+    try {
+      const res = await shopAPI.checkAvailabilityByShopId(shopId, user?.token);
+      if (res.ok) {
+        setIsAvailabilityAdded(res.data.isShopAvailabilityAdded);
+      }
+    } catch (error) {
+      console.error("Error checking availability:", error);
+    }
   };
   useEffect(() => {
     if (!shop) return;
     checkShopAvailability(shop._id);
+    console.log(isAvailabilityAdded);
   }, []);
 
   return (
@@ -91,9 +99,23 @@ const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
           </CardBody>
 
           <CardFooter className="gap-3 flex-wrap">
-            <Button variant="solid" className="submit-btn" onClick={onMenuOpen}>
-              Add Availability
-            </Button>
+            {isAvailabilityAdded ? (
+              <Button
+                variant="solid"
+                className="submit-btn"
+                onClick={onMenuOpen}
+              >
+                Edit Availability
+              </Button>
+            ) : (
+              <Button
+                variant="solid"
+                className="submit-btn"
+                onClick={onMenuOpen}
+              >
+                Add Availability
+              </Button>
+            )}
             <Button
               variant="solid"
               className="submit-btn"
