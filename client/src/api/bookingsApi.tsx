@@ -10,21 +10,21 @@ export const bookingsAPI = {
   getBookingByCustomerId: (
     id: string,
     token?: string,
-    queryString?: string
+    queryString?: string,
   ) => {
     if (queryString) {
       return apiClient(
         `${BOOKING_URL}/list/customer/${id}${queryString}`,
         "GET",
         undefined,
-        token
+        token,
       );
     }
     return apiClient(
       `${BOOKING_URL}/list/customer/${id}`,
       "GET",
       undefined,
-      token
+      token,
     );
   },
 
@@ -36,6 +36,9 @@ export const bookingsAPI = {
       `${BOOKING_URL}/list/shop/${id}?${queryString}`,
       "GET",
       undefined,
-      token
+      token,
     ),
+
+  updateBookingPaymentStatus: (id: string, token?: string) =>
+    apiClient(`${BOOKING_URL}/status/${id}`, "PUT", undefined, token),
 };

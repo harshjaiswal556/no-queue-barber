@@ -38,9 +38,9 @@ const ViewBookings = ({ shopId, shopName }: any) => {
       const data = await bookingsAPI.getBookingsByShopId(
         shopId,
         queryString,
-        token
+        token,
       );
-      console.log(data);
+      data.data.bookings.reverse();
       setBookings(data.data.bookings);
     };
     fetchBookings();

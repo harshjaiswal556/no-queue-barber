@@ -12,12 +12,13 @@ import {
   Stack,
   Text,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 
 import "./ShopsCard.css";
-import Cookies from "js-cookie";
 import CreateShopBooking from "./dashboard/customer/CreateShopBooking";
 import { useState } from "react";
+import { isLoggedIn } from "@/utils/auth";
 
 const ShopsCard = ({
   shop,
@@ -26,7 +27,23 @@ const ShopsCard = ({
   shop: Shop | null;
   isView: boolean;
 }) => {
-  const role = Cookies.get("role");
+  const user = isLoggedIn();
+  const role = user?.role;
+  const token = user?.token;
+
+  const toast = useToast();
+
+  const handleBookMySlot = () => {
+    if (!token) {
+      toast({
+        title: "Please login to book your slot",
+        duration: 5000,
+        status: "info",
+      });
+    } else {
+      onShopOpen();
+    }
+  };
 
   const {
     isOpen: isShopOpen,
@@ -41,7 +58,7 @@ const ShopsCard = ({
       <Card
         w={300}
         m={5}
-        h={!isAddressExpanded ? (isView ? 350 : 385) : 'auto'}
+        h={!isAddressExpanded ? (isView ? 350 : 385) : "auto"}
         className={!isView ? "shop-list-card" : "isview-shop-list-card"}
       >
         <CardBody>
@@ -57,7 +74,12 @@ const ShopsCard = ({
               maxH={175}
             />
           </div>
-          <Stack mt="6" spacing="3" h={isAddressExpanded ? "auto" : 85} onClick={()=>setIsAddressExpanded(!isAddressExpanded)}>
+          <Stack
+            mt="6"
+            spacing="3"
+            h={isAddressExpanded ? "auto" : 85}
+            onClick={() => setIsAddressExpanded(!isAddressExpanded)}
+          >
             <Heading size="md">{shop?.shopName}</Heading>
             <Text noOfLines={isAddressExpanded ? undefined : 2}>
               {shop?.address} - {shop?.zipcode}
@@ -70,7 +92,7 @@ const ShopsCard = ({
               <Button
                 variant="solid"
                 className="submit-btn w-[100%]"
-                onClick={onShopOpen}
+                onClick={handleBookMySlot}
               >
                 Book My Slot Now
               </Button>

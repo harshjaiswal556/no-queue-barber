@@ -18,7 +18,7 @@ import {
 import { useState } from "react";
 import TimePicker from "react-time-picker";
 
-const CreateShopAvailability = ({ onClose, shopId, start, end }: any) => {
+const EditShopAvailability = ({ onClose, shopId, start, end }: any) => {
   const user = isLoggedIn();
   const toast = useToast();
 
@@ -87,7 +87,7 @@ const CreateShopAvailability = ({ onClose, shopId, start, end }: any) => {
   return (
     <ModalContent>
       <form onSubmit={handleSubmit}>
-        <ModalHeader>Add Shop Availability Day Wise</ModalHeader>
+        <ModalHeader>Edit Shop Availability Day Wise</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <FormControl>
@@ -159,4 +159,4 @@ const CreateShopAvailability = ({ onClose, shopId, start, end }: any) => {
   );
 };
 
-export default CreateShopAvailability;
+export default EditShopAvailability;

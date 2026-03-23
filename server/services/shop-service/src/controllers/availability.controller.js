@@ -129,4 +129,19 @@ const getShopAvailabilityByShopId = async (req, res) => {
   }
 };
 
-module.exports = { createShopAvailability, getShopAvailabilityByShopId }
+const checkAvailabilityByShopId = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const isShopExist = await Availability.findOne({ shop_id: id });
+    if (!isShopExist) {
+      return res.status(200).json({ isShopAvailabilityAdded: false, message: "No shop found" });
+    }
+    res.status(200).json({ message: "Shop found successfully", isShopAvailabilityAdded: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
+  }
+
+}
+
+module.exports = { createShopAvailability, getShopAvailabilityByShopId, checkAvailabilityByShopId }
