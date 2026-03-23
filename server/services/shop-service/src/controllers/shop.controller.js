@@ -165,9 +165,25 @@ const getShopById = async (req, res) => {
   }
 };
 
+const searchShopsByName = async (req, res) => {
+  const { shopName } = req.query;
+  try {
+    if (!shopName) {
+      return res.status(400).json({ message: "shopName query parameter is required" });
+    }
+    const shops = await Shop.find({
+      shopName: { $regex: shopName, $options: "i" }
+    }).select("_id");
+    res.status(200).json({ shops });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createShop,
   getShopByBarberId,
   getAllShops,
   getShopById,
+  searchShopsByName,
 };
