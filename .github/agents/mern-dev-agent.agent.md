@@ -25,9 +25,9 @@ This repo has two top-level workspaces:
 - **State:** Redux Toolkit (`client/src/store/auth/`)
 - **Routing:** React Router v7
 - **Auth:** JWT stored in cookies via `js-cookie`; `isLoggedIn()` utility in `client/src/utils/auth.tsx`
-- **API layer:** All HTTP calls go through `client/src/api/apiClient.tsx` → domain-specific files (`shopsApi.tsx`, `bookingsApi.tsx`, `payment.tsx`, `usersApi.tsx`)
+- **API layer:** All HTTP calls go through `client/src/api/apiClient.tsx` → domain-specific files (`shopsApi.tsx`, `bookingsApi.tsx`, `payment.tsx`, `usersApi.tsx`, `contactApi.tsx`)
 - **Payments:** Razorpay checkout (script loaded in `index.html`)
-- **Image uploads:** Firebase Storage (`client/src/utils/firebase.tsx`)
+- **Image uploads:** Cloudinary Storage (`client/src/utils/cloudinary.tsx`)
 - **Key pages:** `Home`, `Stores`, `Dashboard` (role-split: `Barber.tsx` / `Customer.tsx`), `Contact`
 - **CSS theming:** CSS variables in `client/src/styles/Colors.css` — always use these vars, never hardcode colors
 
