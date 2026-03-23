@@ -19,6 +19,7 @@ import ViewBookings from "./ViewBookings";
 import { useEffect, useState } from "react";
 import { shopAPI } from "@/api/shopsApi";
 import { isLoggedIn } from "@/utils/auth";
+import EditShopAvailability from "./EditShopAvailability";
 
 const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
   const user = isLoggedIn();
@@ -48,7 +49,6 @@ const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
   useEffect(() => {
     if (!shop) return;
     checkShopAvailability(shop._id);
-    console.log(isAvailabilityAdded);
   }, []);
 
   return (
@@ -129,12 +129,21 @@ const ShopListingCard = ({ shop }: { shop: Shop | null }) => {
 
       <Modal isOpen={isMenuOpen} onClose={onMenuClose} size={"md"}>
         <ModalOverlay />
-        <CreateShopAvailability
-          onClose={onMenuClose}
-          shopId={shop?._id}
-          start={shop?.workingHours.start}
-          end={shop?.workingHours.end}
-        />
+        {isAvailabilityAdded ? (
+          <EditShopAvailability
+            onClose={onMenuClose}
+            shop_id={shop?._id}
+            start={shop?.workingHours.start}
+            end={shop?.workingHours.end}
+          />
+        ) : (
+          <CreateShopAvailability
+            onClose={onMenuClose}
+            shopId={shop?._id}
+            start={shop?.workingHours.start}
+            end={shop?.workingHours.end}
+          />
+        )}
       </Modal>
 
       <Modal
