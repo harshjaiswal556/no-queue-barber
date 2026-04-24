@@ -1,8 +1,8 @@
 const Booking = require("../schema/booking");
-const Shop = require("../../../../schema/shop");
 const dayjs = require("dayjs");
 const isSameOrAfter = require("dayjs/plugin/isSameOrAfter");
 const { findAvailabilityByShopId } = require("../services/availability.service");
+const { searchShopsByName } = require("../services/shop.service");
 
 dayjs.extend(isSameOrAfter);
 
@@ -105,15 +105,13 @@ const getBookingByCustomerId = async (req, res) => {
     let shopIds = [];
 
     if (shopName) {
-      const matchedShops = await Shop.find({
-        shopName: { $regex: shopName, $options: "i" }
-      }).select("_id");
+      const result = await searchShopsByName(shopName);
 
-      if (matchedShops.length === 0) {
+      if (result.shops.length === 0) {
         return res.status(404).json({ message: "No shops found with that name" });
       }
 
-      shopIds = matchedShops.map(shop => shop._id);
+      shopIds = result.shops.map(shop => shop._id);
     }
 
     const filter = { customer_id };
