@@ -3,6 +3,10 @@
     "playwright": {
       "command": "npx",
       "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "noqueue-audit": {
+      "command": "node",
+      "args": ["${workspaceFolder}/audit-mcp/index.js"]
     }
   }
 }

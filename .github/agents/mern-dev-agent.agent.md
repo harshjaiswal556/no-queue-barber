@@ -157,11 +157,16 @@ cd client && npm install <pkg>
 ## Hard Rules
 
 - **NEVER** reference or recreate `server/server.js`, `server/routes/`, or `server/controllers/` — these are retired. All logic lives inside `server/services/`.
-- **NEVER** commit or log `.env` values, JWT secrets, Razorpay keys, or Firebase config.
+- **NEVER** commit or log `.env` values, JWT secrets, Cloudinary keys, Razorpay keys, or Firebase config.
 - **NEVER** hardcode `localhost` URLs — use `import.meta.env.VITE_SERVER_BASE_URL` (client) or `process.env.*` (server).
 - **NEVER** modify `package-lock.json` directly.
 - **NEVER** bypass the `protect` middleware on routes that touch user-specific data.
 - When changing booking logic, edit `server/services/booking-service/src/controllers/booking.controller.js`.
 - When changing shop or availability logic, edit the corresponding controller inside `server/services/shop-service/src/controllers/`.
+- When changing payment logic, edit the corresponding controller inside `server/services/payment-service/src/controllers/`.
+- When changing user logic, edit the corresponding controller inside `server/services/user-service/src/controllers/`.
+- When changing support logic, edit the corresponding controller inside `server/services/support-service/src/controllers/`.
 - When changing a shared schema, update both `server/schema/<model>.js` and the service-local copy.
 - The `Contact` page form (`client/src/pages/Contact.tsx`) currently has no submit handler — wire it to the support-service via `contactApi.tsx` before shipping any related feature.
+- Always generate a summary of all the changes before applying any changes and after changes is accepted generate html file with file name having current date and time as a suffix.
+- Always store summary of mern-dev-agent HTML file in `agent-summary/dev-agent/<file_name>` and mern-qa-agent HTML file in `agent-summary/dev-agent/<file_name>`
