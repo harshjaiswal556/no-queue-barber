@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>NoQueueBarber Audit Report – 24/4/2026, 7:03:45 am</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #0f1117; color: #e2e8f0; line-height: 1.6; }
+  .header { background: linear-gradient(135deg, #1a1d27 0%, #252836 100%); padding: 32px 40px; border-bottom: 1px solid #2d3748; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; }
+  .header .ts { color: #718096; font-size: 14px; margin-top: 4px; }
+  .health-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 18px; font-weight: 700; margin-top: 12px; }
+  .health-badge.healthy { background: #22543d; color: #9ae6b4; }
+  .health-badge.critical { background: #742a2a; color: #fed7d7; }
+  .health-badge.attention { background: #744210; color: #fefcbf; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; padding: 24px 40px; background: #161820; border-bottom: 1px solid #2d3748; }
+  .summary-card { background: #1a1d27; border: 1px solid #2d3748; border-radius: 12px; padding: 16px; text-align: center; }
+  .summary-card .val { font-size: 32px; font-weight: 800; }
+  .summary-card .lbl { font-size: 12px; color: #718096; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 40px; }
+  .route-section { background: #1a1d27; border: 1px solid #2d3748; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+  .route-title { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 16px; }
+  .url-badge { font-size: 13px; color: #718096; font-weight: 400; margin-left: 8px; }
+  .metrics-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 16px; }
+  .metric { background: #252836; border-radius: 8px; padding: 12px; text-align: center; }
+  .metric-value { font-size: 28px; font-weight: 800; }
+  .metric-label { font-size: 11px; color: #718096; margin-top: 2px; }
+  .error-color { color: #fc8181; }
+  .warn-color { color: #f6e05e; }
+  .ok-color { color: #68d391; }
+  .perf-bar { background: #252836; border-radius: 8px; padding: 12px 16px; display: flex; gap: 24px; font-size: 14px; color: #a0aec0; margin-bottom: 12px; flex-wrap: wrap; }
+  .section-header { font-size: 15px; font-weight: 600; padding: 8px 12px; border-radius: 6px; margin: 16px 0 8px; }
+  .error-bg { background: #2d1515; color: #fc8181; }
+  .warn-bg { background: #2d2600; color: #f6e05e; }
+  .ok-bg { background: #1a2d1a; color: #68d391; }
+  .log-entry { background: #0f1117; border-left: 3px solid; padding: 10px 14px; border-radius: 4px; margin-bottom: 6px; font-size: 13px; word-break: break-all; }
+  .error-entry { border-color: #fc8181; }
+  .warn-entry { border-color: #f6e05e; }
+  .log-entry pre { margin-top: 6px; font-size: 11px; color: #718096; white-space: pre-wrap; }
+  .source { display: block; font-size: 11px; color: #718096; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px; }
+  th { background: #252836; color: #a0aec0; padding: 8px 12px; text-align: left; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+  td { padding: 8px 12px; border-bottom: 1px solid #2d3748; }
+  .url-cell { font-family: monospace; font-size: 12px; max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fail-row td { color: #fc8181; }
+  .ok-row td { color: #e2e8f0; }
+  .warn-row td { color: #f6e05e; }
+  .slow { color: #f6e05e; font-weight: 700; }
+  .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 12px; }
+  .alert.error { background: #2d1515; color: #fc8181; border-left: 4px solid #fc8181; }
+  code { background: #2d3748; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  .impact { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+  .impact-critical { background: #742a2a; color: #fc8181; }
+  .impact-serious { background: #744210; color: #fefcbf; }
+  .impact-moderate { background: #2d3748; color: #a0aec0; }
+  .impact-minor { background: #1a2d1a; color: #68d391; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🔍 NoQueueBarber – Browser Audit Report</h1>
+  <div class="ts">Generated: 24/4/2026, 7:03:45 am</div>
+  <div class="health-badge attention">🟡 NEEDS ATTENTION</div>
+</div>
+
+<div class="summary-grid">
+  <div class="summary-card"><div class="val error-color">0</div><div class="lbl">JS Errors</div></div>
+  <div class="summary-card"><div class="val error-color">13</div><div class="lbl">Console Errors</div></div>
+  <div class="summary-card"><div class="val warn-color">4</div><div class="lbl">Warnings</div></div>
+  <div class="summary-card"><div class="val error-color">0</div><div class="lbl">API Failures</div></div>
+  <div class="summary-card"><div class="val warn-color">1</div><div class="lbl">Slow Requests</div></div>
+  <div class="summary-card"><div class="val warn-color">21</div><div class="lbl">A11y Violations</div></div>
+</div>
+
+<div class="container">
+    <section class="route-section">
+      <h2 class="route-title">📄 / <span class="url-badge">http://localhost:5173/</span></h2>
+
+      
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-value error-color">0</div>
+          <div class="metric-label">JS Errors</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value error-color">3</div>
+          <div class="metric-label">Console Errors</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value warn-color">1</div>
+          <div class="metric-label">Warnings</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value error-color">0</div>
+          <div class="metric-label">API Failures</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value warn-color">1</div>
+          <div class="metric-label">Slow Requests</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value ok-color">6</div>
+          <div class="metric-label">OK API Calls</div>
+        </div>
+      </div>
+
+      <div class="perf-bar">
+              <span>FCP: <b>8592 ms</b></span>
+              <span>DCL: <b>7882 ms</b></span>
+              <span>Load: <b>9862 ms</b></span>
+              <span>Size: <b>1.0 KB</b></span>
+            </div>
+
+      
+
+      
+        <h3 class="section-header error-bg">🔴 Console Errors</h3>
+        <div class="log-entry error-entry">Failed to load resource: the server responded with a status of 404 (Not Found)<span class="source">↳ http://localhost:5173/node_modules/@material-tailwind/html/scripts/collapse.js:0</span></div><div class="log-entry error-entry">Each child in a list should have a unique "key" prop.%s%s See https://react.dev/link/warning-keys for more information. 
+
+Check the render method of `Benefits`. <span class="source">↳ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=7c44ffc7:17524</span></div><div class="log-entry error-entry">Failed to load resource: the server responded with a status of 403 ()<span class="source">↳ https://png.pngtree.com/png-clipart/20190705/original/pngtree-black-and-white-barber-shop-logo-png-image_4359640.jpg:0</span></div>
+      
+
+      
+        <h3 class="section-header warn-bg">🟡 Console Warnings</h3>
+        <div class="log-entry warn-entry">Unrecognized feature: 'web-share'.</div>
+      
+
+      
+
+      
+        <h3 class="section-header ok-bg">✅ Successful API Calls</h3>
+        <table><thead><tr><th>Method</th><th>URL</th><th>Status</th><th>Duration</th></tr></thead><tbody>
+          <tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/usersApi.tsx</td><td>200</td><td class="">21 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/shopsApi.tsx</td><td>200</td><td class="">26 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/apiClient.tsx</td><td>200</td><td class="">111 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/bookingsApi.tsx</td><td>200</td><td class="">55 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/payment.tsx</td><td>200</td><td class="">8 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:3002/api/v1/shop/list?limit=6</td><td>200</td><td class="">358 ms</td></tr>
+        </tbody></table>
+      
+
+      
+        <h3 class="section-header warn-bg">🐢 Slow Requests</h3>
+        <table><thead><tr><th>Method</th><th>URL</th><th>Duration</th></tr></thead><tbody>
+          <tr class="warn-row"><td>GET</td><td class="url-cell">https://checkout.razorpay.com/v1/checkout.js</td><td class="slow">7393 ms</td></tr>
+        </tbody></table>
+      
+
+      
+        <h3 class="section-header warn-bg">♿ Accessibility Violations</h3>
+        <table><thead><tr><th>Rule</th><th>Impact</th><th>Description</th><th>Elements</th></tr></thead><tbody>
+          <tr><td><code>aria-hidden-focus</code></td><td><span class="impact impact-serious">serious</span></td><td>Ensures aria-hidden elements are not focusable nor contain focusable elements</td><td>10</td></tr><tr><td><code>aria-required-children</code></td><td><span class="impact impact-critical">critical</span></td><td>Ensures elements with an ARIA role that require child roles contain them</td><td>2</td></tr><tr><td><code>heading-order</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensures the order of headings is semantically correct</td><td>1</td></tr><tr><td><code>landmark-one-main</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensures the document has a main landmark</td><td>1</td></tr><tr><td><code>region</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensures all page content is contained by landmarks</td><td>27</td></tr>
+        </tbody></table>
+      
+    </section>
+    <section class="route-section">
+      <h2 class="route-title">📄 /stores <span class="url-badge">http://localhost:5173/stores</span></h2>
+
+      
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-value error-color">0</div>
+          <div class="metric-label">JS Errors</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value error-color">4</div>
+          <div class="metric-label">Console Errors</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value warn-color">1</div>
+          <div class="metric-label">Warnings</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value error-color">0</div>
+          <div class="metric-label">API Failures</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value warn-color">0</div>
+          <div class="metric-label">Slow Requests</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value ok-color">6</div>
+          <div class="metric-label">OK API Calls</div>
+        </div>
+      </div>
+
+      <div class="perf-bar">
+              <span>FCP: <b>824 ms</b></span>
+              <span>DCL: <b>678 ms</b></span>
+              <span>Load: <b>845 ms</b></span>
+              <span>Size: <b>1.0 KB</b></span>
+            </div>
+
+      
+
+      
+        <h3 class="section-header error-bg">🔴 Console Errors</h3>
+        <div class="log-entry error-entry">Failed to load resource: the server responded with a status of 404 (Not Found)<span class="source">↳ http://localhost:5173/node_modules/@material-tailwind/html/scripts/collapse.js:0</span></div><div class="log-entry error-entry">Invalid DOM property `%s`. Did you mean `%s`? fill-rule fillRule<span class="source">↳ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=7c44ffc7:2400</span></div><div class="log-entry error-entry">Invalid DOM property `%s`. Did you mean `%s`? clip-rule clipRule<span class="source">↳ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=7c44ffc7:2400</span></div><div class="log-entry error-entry">Failed to load resource: the server responded with a status of 403 ()<span class="source">↳ https://png.pngtree.com/png-clipart/20190705/original/pngtree-black-and-white-barber-shop-logo-png-image_4359640.jpg:0</span></div>
+      
+
+      
+        <h3 class="section-header warn-bg">🟡 Console Warnings</h3>
+        <div class="log-entry warn-entry">Unrecognized feature: 'web-share'.</div>
+      
+
+      
+
+      
+        <h3 class="section-header ok-bg">✅ Successful API Calls</h3>
+        <table><thead><tr><th>Method</th><th>URL</th><th>Status</th><th>Duration</th></tr></thead><tbody>
+          <tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/shopsApi.tsx</td><td>200</td><td class="">70 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/usersApi.tsx</td><td>200</td><td class="">70 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/apiClient.tsx</td><td>200</td><td class="">51 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/bookingsApi.tsx</td><td>200</td><td class="">70 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/payment.tsx</td><td>200</td><td class="">0 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:3002/api/v1/shop/list?page=1&amp;limit=8</td><td>200</td><td class="">92 ms</td></tr>
+        </tbody></table>
+      
+
+      
+
+      
+        <h3 class="section-header warn-bg">♿ Accessibility Violations</h3>
+        <table><thead><tr><th>Rule</th><th>Impact</th><th>Description</th><th>Elements</th></tr></thead><tbody>
+          <tr><td><code>aria-required-children</code></td><td><span class="impact impact-critical">critical</span></td><td>Ensures elements with an ARIA role that require child roles contain them</td><td>2</td></tr><tr><td><code>color-contrast</code></td><td><span class="impact impact-serious">serious</span></td><td>Ensures the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</td><td>2</td></tr><tr><td><code>heading-order</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensures the order of headings is semantically correct</td><td>1</td></tr><tr><td><code>landmark-one-main</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensures the document has a main landmark</td><td>1</td></tr><tr><td><code>page-has-heading-one</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensure that the page, or at least one of its frames contains a level-one heading</td><td>1</td></tr><tr><td><code>region</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensures all page content is contained by landmarks</td><td>15</td></tr>
+        </tbody></table>
+      
+    </section>
+    <section class="route-section">
+      <h2 class="route-title">📄 /dashboard <span class="url-badge">http://localhost:5173/dashboard</span></h2>
+
+      
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-value error-color">0</div>
+          <div class="metric-label">JS Errors</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value error-color">3</div>
+          <div class="metric-label">Console Errors</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value warn-color">1</div>
+          <div class="metric-label">Warnings</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value error-color">0</div>
+          <div class="metric-label">API Failures</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value warn-color">0</div>
+          <div class="metric-label">Slow Requests</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value ok-color">6</div>
+          <div class="metric-label">OK API Calls</div>
+        </div>
+      </div>
+
+      <div class="perf-bar">
+              <span>FCP: <b>796 ms</b></span>
+              <span>DCL: <b>645 ms</b></span>
+              <span>Load: <b>794 ms</b></span>
+              <span>Size: <b>1.0 KB</b></span>
+            </div>
+
+      
+
+      
+        <h3 class="section-header error-bg">🔴 Console Errors</h3>
+        <div class="log-entry error-entry">Failed to load resource: the server responded with a status of 404 (Not Found)<span class="source">↳ http://localhost:5173/node_modules/@material-tailwind/html/scripts/collapse.js:0</span></div><div class="log-entry error-entry">Each child in a list should have a unique "key" prop.%s%s See https://react.dev/link/warning-keys for more information. 
+
+Check the render method of `Benefits`. <span class="source">↳ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=7c44ffc7:17524</span></div><div class="log-entry error-entry">Failed to load resource: the server responded with a status of 403 ()<span class="source">↳ https://png.pngtree.com/png-clipart/20190705/original/pngtree-black-and-white-barber-shop-logo-png-image_4359640.jpg:0</span></div>
+      
+
+      
+        <h3 class="section-header warn-bg">🟡 Console Warnings</h3>
+        <div class="log-entry warn-entry">Unrecognized feature: 'web-share'.</div>
+      
+
+      
+
+      
+        <h3 class="section-header ok-bg">✅ Successful API Calls</h3>
+        <table><thead><tr><th>Method</th><th>URL</th><th>Status</th><th>Duration</th></tr></thead><tbody>
+          <tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/usersApi.tsx</td><td>200</td><td class="">44 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/shopsApi.tsx</td><td>200</td><td class="">45 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/apiClient.tsx</td><td>200</td><td class="">68 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/bookingsApi.tsx</td><td>200</td><td class="">42 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/payment.tsx</td><td>200</td><td class="">16 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:3002/api/v1/shop/list?limit=6</td><td>200</td><td class="">340 ms</td></tr>
+        </tbody></table>
+      
+
+      
+
+      
+        <h3 class="section-header warn-bg">♿ Accessibility Violations</h3>
+        <table><thead><tr><th>Rule</th><th>Impact</th><th>Description</th><th>Elements</th></tr></thead><tbody>
+          <tr><td><code>aria-hidden-focus</code></td><td><span class="impact impact-serious">serious</span></td><td>Ensures aria-hidden elements are not focusable nor contain focusable elements</td><td>10</td></tr><tr><td><code>aria-required-children</code></td><td><span class="impact impact-critical">critical</span></td><td>Ensures elements with an ARIA role that require child roles contain them</td><td>2</td></tr><tr><td><code>heading-order</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensures the order of headings is semantically correct</td><td>1</td></tr><tr><td><code>landmark-one-main</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensures the document has a main landmark</td><td>1</td></tr><tr><td><code>region</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensures all page content is contained by landmarks</td><td>27</td></tr>
+        </tbody></table>
+      
+    </section>
+    <section class="route-section">
+      <h2 class="route-title">📄 /contact <span class="url-badge">http://localhost:5173/contact</span></h2>
+
+      
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-value error-color">0</div>
+          <div class="metric-label">JS Errors</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value error-color">3</div>
+          <div class="metric-label">Console Errors</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value warn-color">1</div>
+          <div class="metric-label">Warnings</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value error-color">0</div>
+          <div class="metric-label">API Failures</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value warn-color">0</div>
+          <div class="metric-label">Slow Requests</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value ok-color">6</div>
+          <div class="metric-label">OK API Calls</div>
+        </div>
+      </div>
+
+      <div class="perf-bar">
+              <span>FCP: <b>1024 ms</b></span>
+              <span>DCL: <b>761 ms</b></span>
+              <span>Load: <b>1063 ms</b></span>
+              <span>Size: <b>1.0 KB</b></span>
+            </div>
+
+      
+
+      
+        <h3 class="section-header error-bg">🔴 Console Errors</h3>
+        <div class="log-entry error-entry">Failed to load resource: the server responded with a status of 404 (Not Found)<span class="source">↳ http://localhost:5173/node_modules/@material-tailwind/html/scripts/collapse.js:0</span></div><div class="log-entry error-entry">Each child in a list should have a unique "key" prop.%s%s See https://react.dev/link/warning-keys for more information. 
+
+Check the render method of `Benefits`. <span class="source">↳ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=7c44ffc7:17524</span></div><div class="log-entry error-entry">Failed to load resource: the server responded with a status of 403 ()<span class="source">↳ https://png.pngtree.com/png-clipart/20190705/original/pngtree-black-and-white-barber-shop-logo-png-image_4359640.jpg:0</span></div>
+      
+
+      
+        <h3 class="section-header warn-bg">🟡 Console Warnings</h3>
+        <div class="log-entry warn-entry">Unrecognized feature: 'web-share'.</div>
+      
+
+      
+
+      
+        <h3 class="section-header ok-bg">✅ Successful API Calls</h3>
+        <table><thead><tr><th>Method</th><th>URL</th><th>Status</th><th>Duration</th></tr></thead><tbody>
+          <tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/shopsApi.tsx</td><td>200</td><td class="">49 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/usersApi.tsx</td><td>200</td><td class="">115 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/apiClient.tsx</td><td>200</td><td class="">78 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/bookingsApi.tsx</td><td>200</td><td class="">88 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:5173/src/api/payment.tsx</td><td>200</td><td class="">39 ms</td></tr><tr class="ok-row"><td>GET</td><td class="url-cell">http://localhost:3002/api/v1/shop/list?limit=6</td><td>200</td><td class="">620 ms</td></tr>
+        </tbody></table>
+      
+
+      
+
+      
+        <h3 class="section-header warn-bg">♿ Accessibility Violations</h3>
+        <table><thead><tr><th>Rule</th><th>Impact</th><th>Description</th><th>Elements</th></tr></thead><tbody>
+          <tr><td><code>aria-hidden-focus</code></td><td><span class="impact impact-serious">serious</span></td><td>Ensures aria-hidden elements are not focusable nor contain focusable elements</td><td>10</td></tr><tr><td><code>aria-required-children</code></td><td><span class="impact impact-critical">critical</span></td><td>Ensures elements with an ARIA role that require child roles contain them</td><td>2</td></tr><tr><td><code>heading-order</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensures the order of headings is semantically correct</td><td>1</td></tr><tr><td><code>landmark-one-main</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensures the document has a main landmark</td><td>1</td></tr><tr><td><code>region</code></td><td><span class="impact impact-moderate">moderate</span></td><td>Ensures all page content is contained by landmarks</td><td>27</td></tr>
+        </tbody></table>
+      
+    </section></div>
+</body></html>
